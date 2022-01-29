@@ -5,9 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game</title>
+    <style>
+        #game-over {
+            position: absolute; 
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 50%; 
+            width: 80%; 
+            display: none; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            background-color: #4fa4b8;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <div id="game" style="height: 100vh; width:95vw; display: flex; justify-content: center; align-items: flex-start;"></div>
+    <div id="main" style="height: 100vh; width:95vw; display: flex; justify-content: center; align-items: flex-start;">
+        <div id="game-over">
+            <div>Game Over</div>
+            <button class="startBtn" onclick="start()">Restart</button>
+        </div>
+    </div>
 
     <script type="text/javascript" src="./dist/phaser.js"></script>
     <script type="module" src="assets/SceneMain.js"></script>
@@ -20,7 +41,7 @@
 
         var config = {
             type: Phaser.WEBGL,
-            parent: "game",
+            parent: "main",
             width: '100%',
             height: '100%',
             physics: {
@@ -39,7 +60,14 @@
         };
 
         var game = new Phaser.Game(config);
-    </script>
 
+        function start() {
+            game.scene.start('SceneMain');
+            document.getElementById('game-over').style.display = 'none';
+        }
+
+        // setting a few functions globally (don't judge)
+        window.start = start;
+    </script>
 </body>
 </html>

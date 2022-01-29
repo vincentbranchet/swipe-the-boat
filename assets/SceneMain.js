@@ -16,6 +16,11 @@ class SceneMain extends Phaser.Scene {
         }
     }
 
+    handleWaveTouched() {
+        this.scene.stop();
+        document.getElementById('game-over').style.display = 'flex';
+    }
+
     preload() {
         this.load.spritesheet("water", "assets/water.png", {
             frameWidth: 16,
@@ -39,15 +44,27 @@ class SceneMain extends Phaser.Scene {
         this.input.on('pointerup', (e) => this.handleRelease(e));
 
         // camera
-        this.cameras.main.setZoom(2.5);
+        this.cameras.main.setZoom(1.5);
 
         // player
-        this.player = this.physics.add.sprite(0, 0, 'boat').refreshBody();
+        this.player = this.physics.add.sprite(0, 0, 'boat', 4).refreshBody();
         this.player.depth = 10;
         this.player.body.setDrag(100);
         this.player.body.setMaxSpeed(this.customControls.maxSpeed);
 
         this.playerSpeed = 2;
+
+        // tsunami
+        this.wave = this.add.group();
+        for(let i = -16; i < 16; i++) {
+            this.waveTile = this.physics.add.sprite(i * this.tileSize, 100, 'water', 64).refreshBody();
+            this.waveTile.depth = 20;
+            this.waveTile.setVelocityY(-10);
+            this.wave.add(this.waveTile);
+        }
+
+        // collisions
+        this.physics.add.overlap(this.player,this.wave, this.handleWaveTouched, null, this);
 
         // controls
         this.keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
@@ -75,6 +92,12 @@ class SceneMain extends Phaser.Scene {
         snappedChunkX = snappedChunkX / this.chunkSize / this.tileSize;
         snappedChunkY = snappedChunkY / this.chunkSize / this.tileSize;
         
+        // get current wave tiles data
+        const waveTiles = this.wave.getChildren();
+        const maxX = Math.max.apply(Math,waveTiles.map((o) => o.x));
+        const maxXTile = waveTiles.find((o) => o.x == maxX);
+        const minX = Math.min.apply(Math,waveTiles.map((o) => o.x));
+        
         // create chunks around position if they don't exist
         for(let x = snappedChunkX - 2; x < snappedChunkX + 2; x++) {
             for(let y = snappedChunkY - 4; y < snappedChunkY + 2; y++) {
@@ -82,6 +105,25 @@ class SceneMain extends Phaser.Scene {
                 if(existingChunk == null) {
                     const newChunk = new Chunk(this, x, y);
                     this.chunks.push(newChunk);
+                    
+                    if(newChunk.x * this.chunkSize * this.tileSize < minX) {
+                        for(let i = minX; i > newChunk.x * this.chunkSize * this.tileSize; i -= this.tileSize) {
+                            this.waveTile = this.physics.add.sprite(i, Math.round(maxXTile.y), 'water', 64).refreshBody();
+                            this.waveTile.depth = 20;
+                            this.waveTile.setVelocityY(maxXTile.body.velocity.y);
+                            this.wave.add(this.waveTile);
+                        }
+                    }
+                    if(newChunk.x * this.chunkSize * this.tileSize > maxX) {
+                        console.log(maxX);
+                        for(let i = maxX; i < newChunk.x * this.chunkSize * this.tileSize; i += this.tileSize) {
+                            console.log(i);
+                            this.waveTile = this.physics.add.sprite(i, Math.round(maxXTile.y), 'water', 64).refreshBody();
+                            this.waveTile.depth = 20;
+                            this.waveTile.setVelocityY(maxXTile.body.velocity.y);
+                            this.wave.add(this.waveTile);
+                        }
+                    }
                 }
             }
         }
