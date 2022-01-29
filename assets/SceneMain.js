@@ -118,18 +118,17 @@ class SceneMain extends Phaser.Scene {
 
         // keyboard controls
         if (this.keyZ.isDown) {
-            this.player.y -= this.playerSpeed *100;
+            this.player.y -= this.playerSpeed;
         }
         if (this.keyS.isDown) {
-            this.player.y += this.playerSpeed *100;
+            this.player.y += this.playerSpeed;
         }
         if (this.keyQ.isDown) {
-            this.player.x -= this.playerSpeed *100;
+            this.player.x -= this.playerSpeed;
         }
         if (this.keyD.isDown) {
-            this.player.x += this.playerSpeed *100;
+            this.player.x += this.playerSpeed;
         }
-        console.log(this.player.body.velocity.y);
 
         this.cameras.main.centerOn(this.player.x, this.player.y - 85);
     }
