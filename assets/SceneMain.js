@@ -21,6 +21,16 @@ class SceneMain extends Phaser.Scene {
         this.debug = document.getElementById('debug');
     }
 
+    init() {
+        this.smoothZoom(this.input);
+    }
+
+    smoothZoom(inputs) {
+        let zoom = setTimeout(() => {
+            this.cameras.main.zoomTo(2.5);
+        }, 2000);
+    }
+
     handleWaveTouched() {
         this.scene.stop();
         let scoreContainer = document.getElementById('score-container');
@@ -154,7 +164,7 @@ class SceneMain extends Phaser.Scene {
         this.input.on('gameout', (e) => this.handleOut(e));
 
         // camera
-        this.cameras.main.setZoom(2.5);
+        this.cameras.main.setZoom(1.5);
 
         // player
         // key 46 : guy with pirate hat

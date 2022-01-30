@@ -11,8 +11,6 @@ class Chunk {
         this.isLoaded = false;
         this.rockProbability = Math.round(Math.log(scene.difficulty));
         this.peopleProbability = (1 / Math.round(Math.log(scene.difficulty) * 10));
-        console.log('rocks : '+this.rockProbability+'%');
-        console.log('people : '+this.peopleProbability+'%');
 
         this.scene.physics.add.overlap(this.scene.player, this.rocks, this.handleRockTouched, null, this);
         this.scene.physics.add.overlap(this.scene.player, this.people, this.handlePeopleTouched, null, this);

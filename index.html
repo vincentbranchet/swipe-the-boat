@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game</title>
     <style>
+        body {
+            width: 100%;
+            height: 100vh;
+            margin: 0;
+        }
         #game-over {
             position: absolute;
             transform: translateY(-50%);
@@ -17,10 +22,44 @@
             color: white;
             z-index: 10
         }
+        #start-screen {
+            background-color: #4fa4b8;
+            margin: auto;
+            height: 100%;
+            width: 95%;
+            max-height: 700px;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            color: white;
+            z-index: 10;
+        }
+        #start-screen p {
+            text-align: center;
+            padding: 0 1rem;
+        }
+        #title {
+            font-size: 2rem;
+            margin-bottom: 5rem;
+        }
+        #start-btn {
+            margin: 1rem 0;
+            font-size: 2rem;
+            padding: 5px 50px;
+        }
     </style>
 </head>
 <body>
-    <div id="main" style="height: '100%'; width:'100%'; display: flex; justify-content: center; align-items: flex-start;">
+    <div id="main" style="padding-top: 1rem; width:'100%'; display: flex; justify-content: center; align-items: flex-start;">
+    </div>
+    <div id="start-screen">
+        <div id="title">DESPERATE RAFT</div>
+        <p>Rescue as many people as you can before the wave hits you</p>
+        <p>Don't hit the rocks</p>
+        <button id="start-btn" onclick="startGame()">START</button>
+        <p style="font-style: italic;">Control your raft by dragging/scrolling the screen with your finger or mouse. You can also use WASD/ZQSD keys.</p>
     </div>
     <div id="debug" style="text-align:center"></div>
 
@@ -49,28 +88,32 @@
                 SceneMain
             ],
             input: {
-                windowEvents: false,
+                activePointer: 1,
             }
         };
-
-        var game = new Phaser.Game(config);
 
         const canv = document.getElementById('main').getElementsByTagName('canvas')[0];
         const container = document.getElementById('main');
 
         let gameOverScreen = document.createElement('div');
-        gameOverScreen.innerHTML = "<p>Game Over</p><p>Score : <span id='score-container'></span></p><button onclick='start()'>Restart</button>";
+        gameOverScreen.innerHTML = "<p>Game Over</p><p>Score : <span id='score-container'></span></p><button onclick='restart()'>Restart</button>";
         gameOverScreen.id = "game-over";
         gameOverScreen.style.top = (globalHeight * 0.5) + 'px';
         gameOverScreen.style.width = globalWidth * 0.8 + 'px';
         main.append(gameOverScreen);
 
-        function start() {
+        function startGame() {
+            document.getElementById('start-screen').style.display = "none";
+            var game = new Phaser.Game(config);
+        }
+
+        function restart() {
             location.reload();
         }
 
         // setting a few functions globally (don't judge)
-        window.start = start;
+        window.restart = restart;
+        window.startGame = startGame;
     </script>
 </body>
 </html>
