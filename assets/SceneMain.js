@@ -12,13 +12,26 @@ class SceneMain extends Phaser.Scene {
             right: false,
             down: false,
             speed: 1,
-            maxSpeed: 400,
+            maxSpeed: 100,
         }
+        this.debug = document.getElementById('debug');
     }
 
     handleWaveTouched() {
         this.scene.stop();
         document.getElementById('game-over').style.display = 'flex';
+    }
+
+    handleRockTouched() {
+        this.scene.stop();
+        document.getElementById('game-over').style.display = 'flex';
+    }
+
+    handlePeopleTouched() {
+        // increase this.customControls.maxSpeed
+        // increase wave speed
+        // increase raft size / people saved (score)
+        // NTA : increase raft size 1 cell, unzoom camera if needed
     }
 
     update() {
@@ -37,7 +50,7 @@ class SceneMain extends Phaser.Scene {
 
         // create chunks around position if they don't exist
         for(let x = snappedChunkX - 2; x < snappedChunkX + 3; x++) {
-            for(let y = snappedChunkY - 5; y < snappedChunkY + 2; y++) {
+            for(let y = snappedChunkY - 4; y < snappedChunkY + 2; y++) {
                 const existingChunk = this.getChunk(x, y);
                 if(existingChunk == null) {
                     const newChunk = new Chunk(this, x, y);
@@ -67,7 +80,7 @@ class SceneMain extends Phaser.Scene {
         for(let i = 0; i < this.chunks.length; i++) {
             const chunk = this.chunks[i];
 
-            if(Phaser.Math.Distance.Between(snappedChunkX, snappedChunkY, chunk.x, chunk.y) < 5) {
+            if(Phaser.Math.Distance.Between(snappedChunkX, snappedChunkY, chunk.x, chunk.y) < 4) {
                 if(chunk !== null) {
                     chunk.load();
                 }
@@ -107,7 +120,10 @@ class SceneMain extends Phaser.Scene {
             this.player.x += this.playerSpeed;
         }
 
+        this.playerCharacter.setPosition(this.player.x, this.player.y - 16);
         this.cameras.main.centerOn(this.player.x, this.player.y - 100);
+
+        this.debug.innerHTML = Math.round(this.player.body.velocity.x) + ', ' + Math.round(this.player.body.velocity.y);
     }
 
     create() {
@@ -126,10 +142,15 @@ class SceneMain extends Phaser.Scene {
         this.cameras.main.setZoom(2.5);
 
         // player
-        this.player = this.physics.add.sprite(0, 0, 'boat', 4).refreshBody();
+        // key 46 : guy with pirate hat
+        // key 24 : boat facing up
+        this.player = this.physics.add.sprite(0, 0, 'beach', 20).refreshBody();
         this.player.depth = 10;
-        this.player.body.setDrag(100);
+        this.player.body.setDrag(50);
         this.player.body.setMaxSpeed(this.customControls.maxSpeed);
+
+        this.playerCharacter = this.physics.add.sprite(0, 0, 'characters', 12).refreshBody();
+        this.playerCharacter.depth = 10;
 
         this.playerSpeed = 2;
 
@@ -157,10 +178,18 @@ class SceneMain extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 16
         });
-        this.load.spritesheet('boat', 'assets/boats.png', { 
+        this.load.spritesheet('boats', 'assets/boats.png', { 
             frameWidth: 32, 
             frameHeight: 32
         }); 
+        this.load.spritesheet('characters', 'assets/characters.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        });
+        this.load.spritesheet('beach', 'assets/beach.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        })
     }
 
     getChunk(x, y) {

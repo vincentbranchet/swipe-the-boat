@@ -24,7 +24,11 @@ class Chunk {
                     const tileY = (this.y * (this.scene.chunkSize * this.scene.tileSize)) + (y * this.scene.tileSize);
                     /**
                      * TODO : add rocks
-                     * TODO : make it more difficult as distance increases
+                     * scene has a difficulty level based on far the wave is from its starting position
+                     * when a chunk is created it receives the difficulty level from the scene
+                     * it uses it to fill its rock and people groups
+                     * each chunk tile is either water, rock or people
+                     * /!\ careful with collision handlers, should be declared in Scene
                      */
                     const key = "water";
                     let tile = new Tile(this.scene, tileX, tileY, key, 5);
