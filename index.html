@@ -59,15 +59,14 @@
         const container = document.getElementById('main');
 
         let gameOverScreen = document.createElement('div');
-        gameOverScreen.innerHTML = "<p>Game Over</p><button onclick='start()'>Restart</button>";
+        gameOverScreen.innerHTML = "<p>Game Over</p><p>Score : <span id='score-container'></span></p><button onclick='start()'>Restart</button>";
         gameOverScreen.id = "game-over";
         gameOverScreen.style.top = (globalHeight * 0.5) + 'px';
         gameOverScreen.style.width = globalWidth * 0.8 + 'px';
         main.append(gameOverScreen);
 
         function start() {
-            game.scene.start('SceneMain');
-            document.getElementById('game-over').style.display = 'none';
+            location.reload();
         }
 
         // setting a few functions globally (don't judge)
