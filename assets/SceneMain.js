@@ -12,29 +12,21 @@ class SceneMain extends Phaser.Scene {
             right: false,
             down: false,
             speed: 1,
-            maxSpeed: 100,
         }
+        this.maxSpeed = 100;
         this.waveStartY = 0;
         this.waveVelocityY = -10;
         this.difficulty = 0;
+        this.score = 0;
         this.debug = document.getElementById('debug');
     }
 
     handleWaveTouched() {
         this.scene.stop();
+        let scoreContainer = document.getElementById('score-container');
+        scoreContainer.innerHTML = this.score;
         document.getElementById('game-over').style.display = 'flex';
-    }
 
-    handleRockTouched() {
-        this.scene.stop();
-        document.getElementById('game-over').style.display = 'flex';
-    }
-
-    handlePeopleTouched() {
-        // increase this.customControls.maxSpeed
-        // increase wave speed
-        // increase raft size / people saved (score)
-        // NTA : increase raft size 1 cell, unzoom camera if needed
     }
 
     handleWaveAcceleration(d) {
@@ -146,7 +138,7 @@ class SceneMain extends Phaser.Scene {
         this.playerCharacter.setPosition(this.player.x, this.player.y - 16);
         this.cameras.main.centerOn(this.player.x, this.player.y - 100);
 
-        this.debug.innerHTML = 'pV : (' + Math.round(this.player.body.velocity.x) + ', ' + Math.round(this.player.body.velocity.y) + ') wV : ' + this.waveVelocityY;
+        this.debug.innerHTML = 'pV : (' + Math.round(this.player.body.velocity.x) + ', ' + Math.round(this.player.body.velocity.y) + ') wV : ' + this.waveVelocityY + ' maxS : ' + this.maxSpeed;
     }
 
     create() {
@@ -170,7 +162,7 @@ class SceneMain extends Phaser.Scene {
         this.player = this.physics.add.sprite(0, -100, 'beach', 20).refreshBody();
         this.player.depth = 10;
         this.player.body.setDrag(50);
-        this.player.body.setMaxSpeed(this.customControls.maxSpeed);
+        this.player.body.setMaxSpeed(this.maxSpeed);
 
         this.playerCharacter = this.physics.add.sprite(0, -100, 'characters', 12).refreshBody();
         this.playerCharacter.depth = 10;
