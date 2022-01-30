@@ -21,69 +21,6 @@ class SceneMain extends Phaser.Scene {
         document.getElementById('game-over').style.display = 'flex';
     }
 
-    preload() {
-        this.load.spritesheet("water", "assets/water.png", {
-            frameWidth: 16,
-            frameHeight: 16
-        });
-        this.load.spritesheet('boat', 'assets/boats.png', { 
-            frameWidth: 32, 
-            frameHeight: 32
-        }); 
-    }
-
-    create() {
-        // general
-        this.chunkSize = 8;
-        this.tileSize = 16;
-        this.chunks = [];
-        this.physics.world.fixedStep = false; 
-        
-        this.input.on('pointerdown', (e) => this.handlePress(e));
-        this.input.on('pointermove', (e) => this.handleDrag(e));
-        this.input.on('pointerup', (e) => this.handleRelease(e));
-
-        // camera
-        this.cameras.main.setZoom(1.5);
-
-        // player
-        this.player = this.physics.add.sprite(0, 0, 'boat', 4).refreshBody();
-        this.player.depth = 10;
-        this.player.body.setDrag(100);
-        this.player.body.setMaxSpeed(this.customControls.maxSpeed);
-
-        this.playerSpeed = 2;
-
-        // tsunami
-        this.wave = this.add.group();
-        for(let i = -16; i < 16; i++) {
-            this.waveTile = this.physics.add.sprite(i * this.tileSize, 100, 'water', 64).refreshBody();
-            this.waveTile.depth = 20;
-            this.waveTile.setVelocityY(-10);
-            this.wave.add(this.waveTile);
-        }
-
-        // collisions
-        this.physics.add.overlap(this.player,this.wave, this.handleWaveTouched, null, this);
-
-        // controls
-        this.keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
-        this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
-        this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    }
-
-    getChunk(x, y) {
-        let chunk = null;
-        for(let i = 0; i < this.chunks.length; i++) {
-            if(this.chunks[i].x == x && this.chunks[i].y == y) {
-                chunk = this.chunks[i];
-            }
-        }
-        return chunk;
-
-    }
-
     update() {
         // retrieve position of chunk where follow point is
         let snappedChunkX = (this.chunkSize * this.tileSize) * Math.round(this.player.x / (this.chunkSize * this.tileSize));
@@ -97,7 +34,7 @@ class SceneMain extends Phaser.Scene {
         const maxX = Math.max.apply(Math,waveTiles.map((o) => o.x));
         const maxXTile = waveTiles.find((o) => o.x == maxX);
         const minX = Math.min.apply(Math,waveTiles.map((o) => o.x));
-        
+
         // create chunks around position if they don't exist
         for(let x = snappedChunkX - 2; x < snappedChunkX + 2; x++) {
             for(let y = snappedChunkY - 4; y < snappedChunkY + 2; y++) {
@@ -115,9 +52,7 @@ class SceneMain extends Phaser.Scene {
                         }
                     }
                     if(newChunk.x * this.chunkSize * this.tileSize > maxX) {
-                        console.log(maxX);
                         for(let i = maxX; i < newChunk.x * this.chunkSize * this.tileSize; i += this.tileSize) {
-                            console.log(i);
                             this.waveTile = this.physics.add.sprite(i, Math.round(maxXTile.y), 'water', 64).refreshBody();
                             this.waveTile.depth = 20;
                             this.waveTile.setVelocityY(maxXTile.body.velocity.y);
@@ -173,6 +108,69 @@ class SceneMain extends Phaser.Scene {
         }
 
         this.cameras.main.centerOn(this.player.x, this.player.y - 85);
+    }
+
+    create() {
+        // general
+        this.chunkSize = 8;
+        this.tileSize = 16;
+        this.chunks = [];
+        this.physics.world.fixedStep = false; 
+        
+        this.input.on('pointerdown', (e) => this.handlePress(e));
+        this.input.on('pointermove', (e) => this.handleDrag(e));
+        this.input.on('pointerup', (e) => this.handleRelease(e));
+
+        // camera
+        this.cameras.main.setZoom(1.5);
+
+        // player
+        this.player = this.physics.add.sprite(0, 0, 'boat', 4).refreshBody();
+        this.player.depth = 10;
+        this.player.body.setDrag(100);
+        this.player.body.setMaxSpeed(this.customControls.maxSpeed);
+
+        this.playerSpeed = 2;
+
+        // tsunami
+        this.wave = this.add.group();
+        for(let i = -16; i < 16; i++) {
+            this.waveTile = this.physics.add.sprite(i * this.tileSize, 100, 'water', 64).refreshBody();
+            this.waveTile.depth = 20;
+            this.waveTile.setVelocityY(-10);
+            this.wave.add(this.waveTile);
+        }
+
+        // collisions
+        this.physics.add.overlap(this.player,this.wave, this.handleWaveTouched, null, this);
+
+        // controls
+        this.keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+        this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+        this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    }
+
+    preload() {
+        this.load.spritesheet("water", "assets/water.png", {
+            frameWidth: 16,
+            frameHeight: 16
+        });
+        this.load.spritesheet('boat', 'assets/boats.png', { 
+            frameWidth: 32, 
+            frameHeight: 32
+        }); 
+    }
+
+    getChunk(x, y) {
+        let chunk = null;
+        for(let i = 0; i < this.chunks.length; i++) {
+            if(this.chunks[i].x == x && this.chunks[i].y == y) {
+                chunk = this.chunks[i];
+            }
+        }
+        return chunk;
+
     }
 
     /**
