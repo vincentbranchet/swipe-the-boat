@@ -7,27 +7,20 @@
     <title>Game</title>
     <style>
         #game-over {
-            position: absolute; 
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            height: 50%; 
-            width: 80%; 
+            position: absolute;
+            transform: translateY(-50%);
             display: none; 
             flex-direction: column; 
             justify-content: center; 
             align-items: center;
             background-color: #4fa4b8;
             color: white;
+            z-index: 10
         }
     </style>
 </head>
 <body>
-    <div id="main" style="height: 100vh; width:95vw; display: flex; justify-content: center; align-items: flex-start;">
-        <div id="game-over">
-            <div>Game Over</div>
-            <button class="startBtn" onclick="start()">Restart</button>
-        </div>
+    <div id="main" style="height: '100%'; width:'100%'; display: flex; justify-content: center; align-items: flex-start;">
     </div>
 
     <script type="text/javascript" src="./dist/phaser.js"></script>
@@ -36,14 +29,14 @@
     <script type="module" src="assets/Tile.js"></script>
     <script type="module">
         import SceneMain from "./assets/SceneMain";
-        const globalWidth = ((window.innerWidth) - 20) < 1200 ? (window.innerWidth) - 20 : 600;
-        const globalHeight = ((window.innerHeight) - 20) < 700 ? (window.innerHeight) - 20 : 350;
+        const globalWidth = (window.innerWidth - 20) < 500 ? window.innerWidth - 20 : 500;
+        const globalHeight = (window.innerHeight - 20) < 700 ? window.innerHeight - 20 : 700;
 
         var config = {
             type: Phaser.WEBGL,
             parent: "main",
-            width: '100%',
-            height: '100%',
+            width: globalWidth,
+            height: globalHeight,
             physics: {
                 default: 'arcade',
                 arcade: {
@@ -55,11 +48,21 @@
                 SceneMain
             ],
             input: {
-                touch: true
-            },
+                windowEvents: false,
+            }
         };
 
         var game = new Phaser.Game(config);
+
+        const canv = document.getElementById('main').getElementsByTagName('canvas')[0];
+        const container = document.getElementById('main');
+
+        let gameOverScreen = document.createElement('div');
+        gameOverScreen.innerHTML = "<p>Game Over</p><button onclick='start()'>Restart</button>";
+        gameOverScreen.id = "game-over";
+        gameOverScreen.style.top = (globalHeight * 0.5) + 'px';
+        gameOverScreen.style.width = globalWidth * 0.8 + 'px';
+        main.append(gameOverScreen);
 
         function start() {
             game.scene.start('SceneMain');

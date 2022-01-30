@@ -36,8 +36,8 @@ class SceneMain extends Phaser.Scene {
         const minX = Math.min.apply(Math,waveTiles.map((o) => o.x));
 
         // create chunks around position if they don't exist
-        for(let x = snappedChunkX - 2; x < snappedChunkX + 2; x++) {
-            for(let y = snappedChunkY - 4; y < snappedChunkY + 2; y++) {
+        for(let x = snappedChunkX - 2; x < snappedChunkX + 3; x++) {
+            for(let y = snappedChunkY - 5; y < snappedChunkY + 2; y++) {
                 const existingChunk = this.getChunk(x, y);
                 if(existingChunk == null) {
                     const newChunk = new Chunk(this, x, y);
@@ -67,7 +67,7 @@ class SceneMain extends Phaser.Scene {
         for(let i = 0; i < this.chunks.length; i++) {
             const chunk = this.chunks[i];
 
-            if(Phaser.Math.Distance.Between(snappedChunkX, snappedChunkY, chunk.x, chunk.y) < 4) {
+            if(Phaser.Math.Distance.Between(snappedChunkX, snappedChunkY, chunk.x, chunk.y) < 5) {
                 if(chunk !== null) {
                     chunk.load();
                 }
@@ -107,7 +107,7 @@ class SceneMain extends Phaser.Scene {
             this.player.x += this.playerSpeed;
         }
 
-        this.cameras.main.centerOn(this.player.x, this.player.y - 85);
+        this.cameras.main.centerOn(this.player.x, this.player.y - 100);
     }
 
     create() {
@@ -120,9 +120,10 @@ class SceneMain extends Phaser.Scene {
         this.input.on('pointerdown', (e) => this.handlePress(e));
         this.input.on('pointermove', (e) => this.handleDrag(e));
         this.input.on('pointerup', (e) => this.handleRelease(e));
+        this.input.on('gameout', (e) => this.handleOut(e));
 
         // camera
-        this.cameras.main.setZoom(1.5);
+        this.cameras.main.setZoom(2.5);
 
         // player
         this.player = this.physics.add.sprite(0, 0, 'boat', 4).refreshBody();
@@ -204,7 +205,6 @@ class SceneMain extends Phaser.Scene {
                         touch.movementX = touch.pageX - this.customControls.prevTouch.pageX;
                         touch.movementY = touch.pageY - this.customControls.prevTouch.pageY;
 
-                        // 5 is the error margin : if the finger moves just a tiny bit, we don't take it into account
                         if(touch.movementY > 1) this.customControls.up = touch.movementY;
                         else this.customControls.up = false;
                         if(touch.movementY < -1) this.customControls.down = touch.movementY;
@@ -223,18 +223,16 @@ class SceneMain extends Phaser.Scene {
         }
         else {
             if(this.customControls.active) {
-                if(e.event.movementX > 0) this.customControls.left = true;
-                if(e.event.movementX < 0) this.customControls.right = true;
-                if(e.event.movementY > 0) this.customControls.up = true;
-                if(e.event.movementY < 0) this.customControls.down = true;
+                if(e.event.movementX > 0) this.customControls.left = e.event.movementX;
+                if(e.event.movementX < 0) this.customControls.right = e.event.movementX;
+                if(e.event.movementY > 0) this.customControls.up = e.event.movementY;
+                if(e.event.movementY < 0) this.customControls.down = e.event.movementY;
             }
         }
     }
 
     handleRelease(e) {
         if(e.event.changedTouches) {
-            console.log('release');
-
             const touches = e.event.changedTouches;
 
             for(let i = 0; i < touches.length; i++) {
@@ -258,6 +256,14 @@ class SceneMain extends Phaser.Scene {
             this.customControls.right = false;
             this.customControls.down = false;
         }
+    }
+
+    handleOut() {
+        this.customControls.active = false;
+        this.customControls.left = false;
+        this.customControls.up = false;
+        this.customControls.right = false;
+        this.customControls.down = false;
     }
 
     copyTouch({ identifier, pageX, pageY }) {
