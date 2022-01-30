@@ -14,6 +14,9 @@ class SceneMain extends Phaser.Scene {
             speed: 1,
             maxSpeed: 100,
         }
+        this.waveStartY = 0;
+        this.waveVelocityY = -10;
+        this.difficulty = 0;
         this.debug = document.getElementById('debug');
     }
 
@@ -32,6 +35,20 @@ class SceneMain extends Phaser.Scene {
         // increase wave speed
         // increase raft size / people saved (score)
         // NTA : increase raft size 1 cell, unzoom camera if needed
+    }
+
+    handleWaveAcceleration(d) {
+        if(d > 0) {
+            this.difficulty = d;
+            this.waveVelocityY -= this.difficulty * 2;
+            const waveTiles = this.wave.getChildren();
+            waveTiles.forEach((tile) => {
+                tile.body.velocity.y = this.waveVelocityY;
+            });
+        }
+        else {
+            this.difficulty = 0;
+        }
     }
 
     update() {
@@ -60,7 +77,7 @@ class SceneMain extends Phaser.Scene {
                         for(let i = minX; i > newChunk.x * this.chunkSize * this.tileSize; i -= this.tileSize) {
                             this.waveTile = this.physics.add.sprite(i, Math.round(maxXTile.y), 'water', 64).refreshBody();
                             this.waveTile.depth = 20;
-                            this.waveTile.setVelocityY(maxXTile.body.velocity.y);
+                            this.waveTile.setVelocityY(this.waveVelocityY);
                             this.wave.add(this.waveTile);
                         }
                     }
@@ -68,7 +85,7 @@ class SceneMain extends Phaser.Scene {
                         for(let i = maxX; i < newChunk.x * this.chunkSize * this.tileSize; i += this.tileSize) {
                             this.waveTile = this.physics.add.sprite(i, Math.round(maxXTile.y), 'water', 64).refreshBody();
                             this.waveTile.depth = 20;
-                            this.waveTile.setVelocityY(maxXTile.body.velocity.y);
+                            this.waveTile.setVelocityY(this.waveVelocityY);
                             this.wave.add(this.waveTile);
                         }
                     }
@@ -90,6 +107,12 @@ class SceneMain extends Phaser.Scene {
                     chunk.unload();
                 }
             }
+        }
+
+        // increment difficulty & wave speed depending on wave distance from start
+        const d = Math.round(Math.log(Math.abs(Math.round(maxXTile.y + 1)) - Math.round(Math.abs(this.waveStartY))));
+        if(d > 0 && d > this.difficulty) {
+            this.handleWaveAcceleration(d);
         }
 
         // touch controls
@@ -123,7 +146,7 @@ class SceneMain extends Phaser.Scene {
         this.playerCharacter.setPosition(this.player.x, this.player.y - 16);
         this.cameras.main.centerOn(this.player.x, this.player.y - 100);
 
-        this.debug.innerHTML = Math.round(this.player.body.velocity.x) + ', ' + Math.round(this.player.body.velocity.y);
+        this.debug.innerHTML = 'pV : (' + Math.round(this.player.body.velocity.x) + ', ' + Math.round(this.player.body.velocity.y) + ') wV : ' + this.waveVelocityY;
     }
 
     create() {
@@ -144,12 +167,12 @@ class SceneMain extends Phaser.Scene {
         // player
         // key 46 : guy with pirate hat
         // key 24 : boat facing up
-        this.player = this.physics.add.sprite(0, 0, 'beach', 20).refreshBody();
+        this.player = this.physics.add.sprite(0, -100, 'beach', 20).refreshBody();
         this.player.depth = 10;
         this.player.body.setDrag(50);
         this.player.body.setMaxSpeed(this.customControls.maxSpeed);
 
-        this.playerCharacter = this.physics.add.sprite(0, 0, 'characters', 12).refreshBody();
+        this.playerCharacter = this.physics.add.sprite(0, -100, 'characters', 12).refreshBody();
         this.playerCharacter.depth = 10;
 
         this.playerSpeed = 2;
@@ -157,9 +180,9 @@ class SceneMain extends Phaser.Scene {
         // tsunami
         this.wave = this.add.group();
         for(let i = -16; i < 16; i++) {
-            this.waveTile = this.physics.add.sprite(i * this.tileSize, 100, 'water', 64).refreshBody();
+            this.waveTile = this.physics.add.sprite(i * this.tileSize, this.waveStartY, 'water', 64).refreshBody();
             this.waveTile.depth = 20;
-            this.waveTile.setVelocityY(-10);
+            this.waveTile.setVelocityY(this.waveVelocityY);
             this.wave.add(this.waveTile);
         }
 
