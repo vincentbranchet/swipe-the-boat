@@ -54,21 +54,24 @@
 <body>
     <div id="main" style="padding-top: 1rem; width:'100%'; display: flex; justify-content: center; align-items: flex-start;">
     </div>
+<!-- OLD HACKY START MENU NOW WIP IN STARTMENU SCENE     
     <div id="start-screen">
         <div id="title">DESPERATE RAFT</div>
         <p>Rescue as many people as you can before the wave hits you</p>
         <p>Don't hit the rocks</p>
         <button id="start-btn" onclick="startGame()">START</button>
         <p style="font-style: italic;">Control your raft by dragging/scrolling the screen with your finger or mouse. You can also use WASD/ZQSD keys.</p>
-    </div>
+    </div> -->
     <div id="debug" style="text-align:center"></div>
 
     <script type="text/javascript" src="./dist/phaser.js"></script>
     <script type="module" src="assets/SceneMain.js"></script>
+    <script type="module" src="assets/StartMenu.js"></script>
     <script type="module" src="assets/Chunk.js"></script>
     <script type="module" src="assets/Tile.js"></script>
     <script type="module">
         import SceneMain from "./assets/SceneMain";
+        import StartMenu from "./assets/StartMenu";
         const globalWidth = (window.innerWidth - 20) < 500 ? window.innerWidth - 20 : 500;
         const globalHeight = (window.innerHeight - 20) < 700 ? window.innerHeight - 20 : 700;
 
@@ -85,16 +88,16 @@
             }
             },
             scene: [
+                StartMenu,
                 SceneMain
             ],
             input: {
                 activePointer: 1,
             }
         };
+        var game = new Phaser.Game(config);
 
-        const canv = document.getElementById('main').getElementsByTagName('canvas')[0];
-        const container = document.getElementById('main');
-
+/*      OLD HACKY GAME OVER SCREEN TO REPLACE WITH GAME OVER SCENE
         let gameOverScreen = document.createElement('div');
         gameOverScreen.innerHTML = "<p>Game Over</p><p>Score : <span id='score-container'></span></p><button onclick='restart()'>Restart</button>";
         gameOverScreen.id = "game-over";
@@ -102,18 +105,12 @@
         gameOverScreen.style.width = globalWidth * 0.8 + 'px';
         main.append(gameOverScreen);
 
-        function startGame() {
-            document.getElementById('start-screen').style.display = "none";
-            var game = new Phaser.Game(config);
-        }
-
         function restart() {
             location.reload();
         }
 
         // setting a few functions globally (don't judge)
-        window.restart = restart;
-        window.startGame = startGame;
+        window.restart = restart; */
     </script>
 </body>
 </html>
