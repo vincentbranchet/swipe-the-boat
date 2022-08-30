@@ -22,33 +22,6 @@
             color: white;
             z-index: 10
         }
-        #start-screen {
-            background-color: #4fa4b8;
-            margin: auto;
-            height: 100%;
-            width: 95%;
-            max-height: 700px;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center;
-            color: white;
-            z-index: 10;
-        }
-        #start-screen p {
-            text-align: center;
-            padding: 0 1rem;
-        }
-        #title {
-            font-size: 2rem;
-            margin-bottom: 5rem;
-        }
-        #start-btn {
-            margin: 1rem 0;
-            font-size: 2rem;
-            padding: 5px 50px;
-        }
     </style>
 </head>
 <body>
@@ -65,13 +38,15 @@
     <div id="debug" style="text-align:center"></div>
 
     <script type="text/javascript" src="./dist/phaser.js"></script>
-    <script type="module" src="assets/SceneMain.js"></script>
-    <script type="module" src="assets/StartMenu.js"></script>
+    <script type="module" src="assets/Game.js"></script>
+    <script type="module" src="assets/Start.js"></script>
+    <script type="module" src="assets/GameOver.js"></script>
     <script type="module" src="assets/Chunk.js"></script>
     <script type="module" src="assets/Tile.js"></script>
     <script type="module">
-        import SceneMain from "./assets/SceneMain";
-        import StartMenu from "./assets/StartMenu";
+        import Game from "./assets/scenes/Game";
+        import Start from "./assets/scenes/Start";
+        import GameOver from "./assets/scenes/GameOver";
         const globalWidth = (window.innerWidth - 20) < 500 ? window.innerWidth - 20 : 500;
         const globalHeight = (window.innerHeight - 20) < 700 ? window.innerHeight - 20 : 700;
 
@@ -88,8 +63,9 @@
             }
             },
             scene: [
-                StartMenu,
-                SceneMain
+                Start,
+                Game,
+                GameOver
             ],
             input: {
                 activePointer: 1,

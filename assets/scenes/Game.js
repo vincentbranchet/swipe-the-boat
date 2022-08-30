@@ -1,8 +1,8 @@
-import Chunk from "./Chunk";
+import Chunk from "../Chunk";
 
-class SceneMain extends Phaser.Scene {
+class Game extends Phaser.Scene {
     constructor() {
-        super({key: 'SceneMain'});
+        super({key: 'Game'});
         this.customControls = {
             active: false,
             touches: [],
@@ -33,9 +33,7 @@ class SceneMain extends Phaser.Scene {
 
     handleWaveTouched() {
         this.scene.stop();
-        let scoreContainer = document.getElementById('score-container');
-        scoreContainer.innerHTML = this.score;
-        document.getElementById('game-over').style.display = 'flex';
+        this.scene.start('GameOver');
 
     }
 
@@ -336,4 +334,4 @@ class SceneMain extends Phaser.Scene {
     }
 }
 
-export default SceneMain;
+export default Game;
