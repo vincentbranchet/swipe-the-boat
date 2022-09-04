@@ -34,7 +34,6 @@ class Game extends Phaser.Scene {
     handleWaveTouched() {
         this.scene.stop();
         this.scene.start('GameOver');
-
     }
 
     handleWaveAcceleration(d) {
@@ -53,8 +52,8 @@ class Game extends Phaser.Scene {
 
     update() {
         // retrieve position of chunk where follow point is
-        let snappedChunkX = (this.chunkSize * this.tileSize) * Math.round(this.player.x / (this.chunkSize * this.tileSize));
-        let snappedChunkY = (this.chunkSize * this.tileSize) * Math.round(this.player.y / (this.chunkSize * this.tileSize));
+        let snappedChunkX = (this.chunkSize * this.tileSize) * Math.round(this.playerBoats.getChildren()[0].x / (this.chunkSize * this.tileSize));
+        let snappedChunkY = (this.chunkSize * this.tileSize) * Math.round(this.playerBoats.getChildren()[0].y / (this.chunkSize * this.tileSize));
 
         snappedChunkX = snappedChunkX / this.chunkSize / this.tileSize;
         snappedChunkY = snappedChunkY / this.chunkSize / this.tileSize;
@@ -70,6 +69,7 @@ class Game extends Phaser.Scene {
             for(let y = snappedChunkY - 4; y < snappedChunkY + 2; y++) {
                 const existingChunk = this.getChunk(x, y);
                 if(existingChunk == null) {
+                    console.log(`Creating chunk in (${x}, ${y})`)
                     const newChunk = new Chunk(this, x, y);
                     this.chunks.push(newChunk);
                     
@@ -100,11 +100,13 @@ class Game extends Phaser.Scene {
             if(Phaser.Math.Distance.Between(snappedChunkX, snappedChunkY, chunk.x, chunk.y) < 4) {
                 if(chunk !== null) {
                     chunk.load();
+                    //console.log(`Loading chunk in (${chunk.x}, ${chunk.y})`)
                 }
             }
             else {
                 if(chunk !== null) {
                     chunk.unload();
+                    //console.log(`Unloading chunk in (${chunk.x}, ${chunk.y})`)
                 }
             }
         }
@@ -117,36 +119,37 @@ class Game extends Phaser.Scene {
 
         // touch controls
         if(this.customControls.up) {
-            this.player.setVelocityY(this.player.body.velocity.y - this.customControls.speed * Math.abs(this.customControls.up * 0.5));
+            this.playerBoats.setVelocityY(this.playerBoats.getChildren()[0].body.velocity.y - this.customControls.speed * Math.abs(this.customControls.up * 0.5));
         }
         if(this.customControls.down) {
-            this.player.setVelocityY(this.player.body.velocity.y + this.customControls.speed * Math.abs(this.customControls.down * 0.5));
+            this.playerBoats.setVelocityY(this.playerBoats.getChildren()[0].body.velocity.y + this.customControls.speed * Math.abs(this.customControls.down * 0.5));
         }
         if(this.customControls.right) {
-            this.player.setVelocityX(this.player.body.velocity.x + this.customControls.speed * Math.abs(this.customControls.right * 0.5));
+            this.playerBoats.setVelocityX(this.playerBoats.getChildren()[0].body.velocity.x + this.customControls.speed * Math.abs(this.customControls.right * 0.5));
         }
         if(this.customControls.left) {
-            this.player.setVelocityX(this.player.body.velocity.x - this.customControls.speed * Math.abs(this.customControls.left * 0.5));
+            this.playerBoats.setVelocityX(this.playerBoats.getChildren()[0].body.velocity.x - this.customControls.speed * Math.abs(this.customControls.left * 0.5));
         }
 
         // keyboard controls
         if (this.keyZ.isDown) {
-            this.player.y -= this.playerSpeed;
+            this.playerBoats.y -= this.playerSpeed;
         }
         if (this.keyS.isDown) {
-            this.player.y += this.playerSpeed;
+            this.playerBoats.y += this.playerSpeed;
         }
         if (this.keyQ.isDown) {
-            this.player.x -= this.playerSpeed;
+            this.playerBoats.x -= this.playerSpeed;
         }
         if (this.keyD.isDown) {
-            this.player.x += this.playerSpeed;
+            this.playerBoats.x += this.playerSpeed;
         }
 
-        this.playerCharacter.setPosition(this.player.x, this.player.y - 16);
-        this.cameras.main.centerOn(this.player.x, this.player.y - 100);
+        this.playerCharacters.setX(this.playerBoats.getChildren()[0].x);
+        this.playerCharacters.setY(this.playerBoats.getChildren()[0].y - 16);
+        this.cameras.main.centerOn(this.playerBoats.getChildren()[0].x, this.playerBoats.getChildren()[0].y - 100);
 
-        this.debug.innerHTML = 'pV : (' + Math.round(this.player.body.velocity.x) + ', ' + Math.round(this.player.body.velocity.y) + ') wV : ' + this.waveVelocityY + ' maxS : ' + this.maxSpeed;
+        this.debug.innerHTML = 'pV : (' + Math.round(this.playerBoats.getChildren()[0].body.velocity.x) + ', ' + Math.round(this.playerBoats.getChildren()[0].body.velocity.y) + ') wV : ' + this.waveVelocityY + ' maxS : ' + this.maxSpeed;
     }
 
     create() {
@@ -164,16 +167,20 @@ class Game extends Phaser.Scene {
         // camera
         this.cameras.main.setZoom(1.5);
 
-        // player
+        // player boats
         // key 46 : guy with pirate hat
         // key 24 : boat facing up
-        this.player = this.physics.add.sprite(0, -100, 'beach', 20).refreshBody();
-        this.player.depth = 10;
-        this.player.body.setDrag(50);
-        this.player.body.setMaxSpeed(this.maxSpeed);
+        this.playerBoats = this.physics.add.group();
+        const raft = this.physics.add.sprite(0, -100, 'beach', 20).refreshBody();
+        this.playerBoats.add(raft);
+        this.playerBoats.setDepth(1);
+        this.playerBoats.getChildren().forEach(b => b.body.setDrag(50));
+        this.playerBoats.getChildren().forEach(b => b.body.setMaxSpeed(this.maxSpeed));
 
-        this.playerCharacter = this.physics.add.sprite(0, -100, 'characters', 12).refreshBody();
-        this.playerCharacter.depth = 10;
+        this.playerCharacters = this.physics.add.group();
+        const adam = this.physics.add.sprite(0, -100, 'characters', 12).refreshBody();
+        this.playerCharacters.add(adam);
+        this.playerCharacters.setDepth(10);
 
         this.playerSpeed = 2;
 
@@ -187,7 +194,7 @@ class Game extends Phaser.Scene {
         }
 
         // collisions
-        this.physics.add.overlap(this.player,this.wave, this.handleWaveTouched, null, this);
+        this.physics.add.overlap(this.playerBoats,this.wave, this.handleWaveTouched, null, this);
 
         // controls
         this.keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);

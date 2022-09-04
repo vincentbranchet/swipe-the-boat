@@ -12,27 +12,28 @@ class Chunk {
         this.rockProbability = Math.round(Math.log(scene.difficulty));
         this.peopleProbability = (1 / Math.round(Math.log(scene.difficulty) * 10));
 
-        this.scene.physics.add.overlap(this.scene.player, this.rocks, this.handleRockTouched, null, this);
-        this.scene.physics.add.overlap(this.scene.player, this.people, this.handlePeopleTouched, null, this);
+        this.scene.physics.add.overlap(this.scene.playerBoats.getChildren()[0], this.rocks, this.handleRockTouched, null, this);
+        this.scene.physics.add.overlap(this.scene.playerBoats.getChildren()[0], this.people, this.handlePeopleTouched, null, this);
+        /**
+         * TODO : add overlap on EVERY member of player group and not just the first one
+         * OR make a hitbox object on top of player group to handle that kind of stuff (probably what you're supposed to do)
+         */
     }
 
     handlePeopleTouched(player, people) {
         if(people.active) {
             this.scene.maxSpeed = this.scene.maxSpeed + 20;
-            this.scene.player.body.setMaxSpeed(this.scene.maxSpeed);
+            this.scene.playerBoats.getChildren()[0].body.setMaxSpeed(this.scene.maxSpeed);
             this.scene.score++;
             this.people.killAndHide(people);
         }
-        // increase wave speed ?? instead of log function ?
+            // increase wave speed ?? instead of log function ?
         // NTA : increase raft size 1 cell, unzoom camera if needed
     }
 
     handleRockTouched() {
         this.scene.scene.stop();
-        let scoreContainer = document.getElementById('score-container');
-        scoreContainer.innerHTML = this.scene.score;
-        document.getElementById('game-over').style.display = 'flex';
-
+        this.scene.scene.start('GameOver');
     }
 
     unload() {

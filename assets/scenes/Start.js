@@ -14,8 +14,8 @@ class Start extends Phaser.Scene {
         this.add.text(100,100, 'Start Game',{ fill: '#0f0' })
             .setInteractive()
             .on('pointerdown', () => {
-                this.scene.stop();
                 this.scene.start('Game');
+                this.scene.stop();
             });
     }
 

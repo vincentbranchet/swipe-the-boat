@@ -64,7 +64,6 @@ class GameOver extends Phaser.Scene {
                     this.scene.stop();
                     this.scene.start('Game');
                 });
-
             this.player.x += 1000;
             this.playerCharacter.x += 1000;
         }
