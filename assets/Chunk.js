@@ -23,9 +23,29 @@ class Chunk {
     handlePeopleTouched(player, people) {
         if(people.active) {
             this.scene.maxSpeed = this.scene.maxSpeed + 20;
+            const playerBoats = this.scene.playerBoats.getChildren();
+
+            console.log('Adding raft in ('+playerBoats[0].x + playerBoats.length * 16+', '+playerBoats[0].y+')');
+            const raft = this.scene.physics.add.sprite(playerBoats[0].x + playerBoats.length * 16, playerBoats[0].y, 'beach', 20).refreshBody();
+            raft.depth = 1;
+            raft.body.setDrag(50);
+            raft.body.setMaxSpeed(this.scene.maxSpeed);
+            this.scene.playerBoats.add(raft);
+            /* this.scene.playerBoats.setDepth(1);
+            this.playerBoats.getChildren().forEach(b => b.body.setDrag(50));
+            this.playerBoats.getChildren().forEach(b => b.body.setMaxSpeed(this.maxSpeed)); */
+    
+            /* this.playerCharacters = this.physics.add.group();
+            const adam = this.physics.add.sprite(0, -100, 'characters', 12).refreshBody();
+            this.playerCharacters.add(adam);
+            this.playerCharacters.setDepth(10);
+    
+            this.playerSpeed = 2; */
+
             this.scene.playerBoats.getChildren()[0].body.setMaxSpeed(this.scene.maxSpeed);
             this.scene.score++;
             this.people.killAndHide(people);
+    
         }
             // increase wave speed ?? instead of log function ?
         // NTA : increase raft size 1 cell, unzoom camera if needed

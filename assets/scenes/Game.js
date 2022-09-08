@@ -51,9 +51,10 @@ class Game extends Phaser.Scene {
     }
 
     update() {
+        const boatsObjects = this.playerBoats.getChildren();
         // retrieve position of chunk where follow point is
-        let snappedChunkX = (this.chunkSize * this.tileSize) * Math.round(this.playerBoats.getChildren()[0].x / (this.chunkSize * this.tileSize));
-        let snappedChunkY = (this.chunkSize * this.tileSize) * Math.round(this.playerBoats.getChildren()[0].y / (this.chunkSize * this.tileSize));
+        let snappedChunkX = (this.chunkSize * this.tileSize) * Math.round(boatsObjects[0].x / (this.chunkSize * this.tileSize));
+        let snappedChunkY = (this.chunkSize * this.tileSize) * Math.round(boatsObjects[0].y / (this.chunkSize * this.tileSize));
 
         snappedChunkX = snappedChunkX / this.chunkSize / this.tileSize;
         snappedChunkY = snappedChunkY / this.chunkSize / this.tileSize;
@@ -65,11 +66,12 @@ class Game extends Phaser.Scene {
         const minX = Math.min.apply(Math,waveTiles.map((o) => o.x));
 
         // create chunks around position if they don't exist
+        let chunkPositions = '';
         for(let x = snappedChunkX - 2; x < snappedChunkX + 3; x++) {
             for(let y = snappedChunkY - 4; y < snappedChunkY + 2; y++) {
                 const existingChunk = this.getChunk(x, y);
                 if(existingChunk == null) {
-                    console.log(`Creating chunk in (${x}, ${y})`)
+                    chunkPositions = chunkPositions.concat('('+x+', '+y+') ');
                     const newChunk = new Chunk(this, x, y);
                     this.chunks.push(newChunk);
                     
@@ -92,6 +94,7 @@ class Game extends Phaser.Scene {
                 }
             }
         }
+        chunkPositions != '' ? console.log(`Created chunks in ${chunkPositions}`) : null;
 
         // load existings chunks close to position & unload existing chunks far from position
         for(let i = 0; i < this.chunks.length; i++) {
@@ -119,16 +122,16 @@ class Game extends Phaser.Scene {
 
         // touch controls
         if(this.customControls.up) {
-            this.playerBoats.setVelocityY(this.playerBoats.getChildren()[0].body.velocity.y - this.customControls.speed * Math.abs(this.customControls.up * 0.5));
+            this.playerBoats.setVelocityY(boatsObjects[0].body.velocity.y - this.customControls.speed * Math.abs(this.customControls.up * 0.5));
         }
         if(this.customControls.down) {
-            this.playerBoats.setVelocityY(this.playerBoats.getChildren()[0].body.velocity.y + this.customControls.speed * Math.abs(this.customControls.down * 0.5));
+            this.playerBoats.setVelocityY(boatsObjects[0].body.velocity.y + this.customControls.speed * Math.abs(this.customControls.down * 0.5));
         }
         if(this.customControls.right) {
-            this.playerBoats.setVelocityX(this.playerBoats.getChildren()[0].body.velocity.x + this.customControls.speed * Math.abs(this.customControls.right * 0.5));
+            this.playerBoats.setVelocityX(boatsObjects[0].body.velocity.x + this.customControls.speed * Math.abs(this.customControls.right * 0.5));
         }
         if(this.customControls.left) {
-            this.playerBoats.setVelocityX(this.playerBoats.getChildren()[0].body.velocity.x - this.customControls.speed * Math.abs(this.customControls.left * 0.5));
+            this.playerBoats.setVelocityX(boatsObjects[0].body.velocity.x - this.customControls.speed * Math.abs(this.customControls.left * 0.5));
         }
 
         // keyboard controls
@@ -145,11 +148,11 @@ class Game extends Phaser.Scene {
             this.playerBoats.x += this.playerSpeed;
         }
 
-        this.playerCharacters.setX(this.playerBoats.getChildren()[0].x);
-        this.playerCharacters.setY(this.playerBoats.getChildren()[0].y - 16);
-        this.cameras.main.centerOn(this.playerBoats.getChildren()[0].x, this.playerBoats.getChildren()[0].y - 100);
+        this.playerCharacters.setX(boatsObjects[0].x);
+        this.playerCharacters.setY(boatsObjects[0].y - 16);
+        this.cameras.main.centerOn(boatsObjects[0].x, boatsObjects[0].y - 100);
 
-        this.debug.innerHTML = 'pV : (' + Math.round(this.playerBoats.getChildren()[0].body.velocity.x) + ', ' + Math.round(this.playerBoats.getChildren()[0].body.velocity.y) + ') wV : ' + this.waveVelocityY + ' maxS : ' + this.maxSpeed;
+        this.debug.innerHTML = 'pV : (' + Math.round(boatsObjects[0].body.velocity.x) + ', ' + Math.round(boatsObjects[0].body.velocity.y) + ') wV : ' + this.waveVelocityY + ' maxS : ' + this.maxSpeed;
     }
 
     create() {
