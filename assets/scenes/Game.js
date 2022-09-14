@@ -152,7 +152,16 @@ class Game extends Phaser.Scene {
         this.playerCharacters.setY(boatsObjects[0].y - 16);
         this.cameras.main.centerOn(boatsObjects[0].x, boatsObjects[0].y - 100);
 
-        this.debug.innerHTML = 'pV : (' + Math.round(boatsObjects[0].body.velocity.x) + ', ' + Math.round(boatsObjects[0].body.velocity.y) + ') wV : ' + this.waveVelocityY + ' maxS : ' + this.maxSpeed;
+        let boatsVelocity = '', boatsDrag = '';
+        boatsObjects.forEach(boat => {
+            boatsVelocity = boatsVelocity.concat(`(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)}),`);
+            boatsDrag = boatsDrag.concat(`(${Math.round(boat.body.drag.x)}, ${Math.round(boat.body.drag.y)}),`);
+        });
+        this.debug.innerHTML = 
+            `boats velocity : ${boatsVelocity}
+            <br /> boats drag : ${boatsDrag}
+            <br /> wave velocity Y : ${this.waveVelocityY}
+            <br /> max speed : ${this.maxSpeed}`;
     }
 
     create() {
@@ -177,7 +186,7 @@ class Game extends Phaser.Scene {
         const raft = this.physics.add.sprite(0, -100, 'beach', 20).refreshBody();
         this.playerBoats.add(raft);
         this.playerBoats.setDepth(1);
-        this.playerBoats.getChildren().forEach(b => b.body.setDrag(50));
+        this.playerBoats.getChildren().forEach(b => b.setDrag(50));
         this.playerBoats.getChildren().forEach(b => b.body.setMaxSpeed(this.maxSpeed));
 
         this.playerCharacters = this.physics.add.group();

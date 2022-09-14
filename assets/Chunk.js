@@ -26,11 +26,13 @@ class Chunk {
             const playerBoats = this.scene.playerBoats.getChildren();
 
             console.log('Adding raft in ('+playerBoats[0].x + playerBoats.length * 16+', '+playerBoats[0].y+')');
-            const raft = this.scene.physics.add.sprite(playerBoats[0].x + playerBoats.length * 16, playerBoats[0].y, 'beach', 20).refreshBody();
+            const raft = this.scene.physics.add.sprite(playerBoats[0].x + playerBoats.length * 16, playerBoats[0].y, 'beach', 20).refreshBody();    
             raft.depth = 1;
-            raft.body.setDrag(50);
+            raft.setDrag(50);
             raft.body.setMaxSpeed(this.scene.maxSpeed);
+            console.log({x: raft.body.drag.x, y: raft.body.drag.y});
             this.scene.playerBoats.add(raft);
+            
             /* this.scene.playerBoats.setDepth(1);
             this.playerBoats.getChildren().forEach(b => b.body.setDrag(50));
             this.playerBoats.getChildren().forEach(b => b.body.setMaxSpeed(this.maxSpeed)); */
