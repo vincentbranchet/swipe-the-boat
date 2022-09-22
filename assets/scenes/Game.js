@@ -1,4 +1,5 @@
 import Chunk from "../Chunk";
+import PlayerCharacter from "../PlayerCharacter";
 
 class Game extends Phaser.Scene {
     constructor() {
@@ -51,7 +52,7 @@ class Game extends Phaser.Scene {
     }
 
     update() {
-        const boatsObjects = this.playerBoats.getChildren();
+        const boatsObjects = this.player.boat?.getChildren();
         // retrieve position of chunk where follow point is
         let snappedChunkX = (this.chunkSize * this.tileSize) * Math.round(boatsObjects[0].x / (this.chunkSize * this.tileSize));
         let snappedChunkY = (this.chunkSize * this.tileSize) * Math.round(boatsObjects[0].y / (this.chunkSize * this.tileSize));
@@ -122,34 +123,34 @@ class Game extends Phaser.Scene {
 
         // touch controls
         if(this.customControls.up) {
-            this.playerBoats.setVelocityY(boatsObjects[0].body.velocity.y - this.customControls.speed * Math.abs(this.customControls.up * 0.5));
+            this.player.boat.setVelocityY(boatsObjects[0].body.velocity.y - this.customControls.speed * Math.abs(this.customControls.up * 0.5));
         }
         if(this.customControls.down) {
-            this.playerBoats.setVelocityY(boatsObjects[0].body.velocity.y + this.customControls.speed * Math.abs(this.customControls.down * 0.5));
+            this.player.boat.setVelocityY(boatsObjects[0].body.velocity.y + this.customControls.speed * Math.abs(this.customControls.down * 0.5));
         }
         if(this.customControls.right) {
-            this.playerBoats.setVelocityX(boatsObjects[0].body.velocity.x + this.customControls.speed * Math.abs(this.customControls.right * 0.5));
+            this.player.boat.setVelocityX(boatsObjects[0].body.velocity.x + this.customControls.speed * Math.abs(this.customControls.right * 0.5));
         }
         if(this.customControls.left) {
-            this.playerBoats.setVelocityX(boatsObjects[0].body.velocity.x - this.customControls.speed * Math.abs(this.customControls.left * 0.5));
+            this.player.boat.setVelocityX(boatsObjects[0].body.velocity.x - this.customControls.speed * Math.abs(this.customControls.left * 0.5));
         }
 
         // keyboard controls
         if (this.keyZ.isDown) {
-            this.playerBoats.y -= this.playerSpeed;
+            this.player.boat.y -= this.playerSpeed;
         }
         if (this.keyS.isDown) {
-            this.playerBoats.y += this.playerSpeed;
+            this.player.boat.y += this.playerSpeed;
         }
         if (this.keyQ.isDown) {
-            this.playerBoats.x -= this.playerSpeed;
+            this.player.boat.x -= this.playerSpeed;
         }
         if (this.keyD.isDown) {
-            this.playerBoats.x += this.playerSpeed;
+            this.player.boat.x += this.playerSpeed;
         }
 
-        this.playerCharacters.setX(boatsObjects[0].x);
-        this.playerCharacters.setY(boatsObjects[0].y - 16);
+        this.player.characters.setX(boatsObjects[0].x);
+        this.player.characters.setY(boatsObjects[0].y - 16);
         this.cameras.main.centerOn(boatsObjects[0].x, boatsObjects[0].y - 100);
 
         let boatsVelocity = '', boatsDrag = '';
@@ -179,21 +180,9 @@ class Game extends Phaser.Scene {
         // camera
         this.cameras.main.setZoom(1.5);
 
-        // player boats
-        // key 46 : guy with pirate hat
-        // key 24 : boat facing up
-        this.playerBoats = this.physics.add.group();
-        const raft = this.physics.add.sprite(0, -100, 'beach', 20).refreshBody();
-        this.playerBoats.add(raft);
-        this.playerBoats.setDepth(1);
-        this.playerBoats.getChildren().forEach(b => b.setDrag(50));
-        this.playerBoats.getChildren().forEach(b => b.body.setMaxSpeed(this.maxSpeed));
-
-        this.playerCharacters = this.physics.add.group();
-        const adam = this.physics.add.sprite(0, -100, 'characters', 12).refreshBody();
-        this.playerCharacters.add(adam);
-        this.playerCharacters.setDepth(10);
-
+        // player
+        this.player = new PlayerCharacter(this);
+        this.player.init();
         this.playerSpeed = 2;
 
         // tsunami
@@ -206,7 +195,7 @@ class Game extends Phaser.Scene {
         }
 
         // collisions
-        this.physics.add.overlap(this.playerBoats,this.wave, this.handleWaveTouched, null, this);
+        this.physics.add.overlap(this.player.boat, this.wave, this.handleWaveTouched, null, this);
 
         // controls
         this.keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);

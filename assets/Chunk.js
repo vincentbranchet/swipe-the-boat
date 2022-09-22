@@ -12,8 +12,8 @@ class Chunk {
         this.rockProbability = Math.round(Math.log(scene.difficulty));
         this.peopleProbability = (1 / Math.round(Math.log(scene.difficulty) * 10));
 
-        this.scene.physics.add.overlap(this.scene.playerBoats.getChildren()[0], this.rocks, this.handleRockTouched, null, this);
-        this.scene.physics.add.overlap(this.scene.playerBoats.getChildren()[0], this.people, this.handlePeopleTouched, null, this);
+        this.scene.physics.add.overlap(this.scene.player.boat.getChildren()[0], this.rocks, this.handleRockTouched, null, this);
+        this.scene.physics.add.overlap(this.scene.player.boat.getChildren()[0], this.people, this.handlePeopleTouched, null, this);
         /**
          * TODO : add overlap on EVERY member of player group and not just the first one
          * OR make a hitbox object on top of player group to handle that kind of stuff (probably what you're supposed to do)
@@ -23,15 +23,18 @@ class Chunk {
     handlePeopleTouched(player, people) {
         if(people.active) {
             this.scene.maxSpeed = this.scene.maxSpeed + 20;
-            const playerBoats = this.scene.playerBoats.getChildren();
+            const playerBoats = this.scene.player.boat.getChildren();
+            const lastChild = playerBoats[playerBoats.length - 1];
 
-            console.log('Adding raft in ('+playerBoats[0].x + playerBoats.length * 16+', '+playerBoats[0].y+')');
-            const raft = this.scene.physics.add.sprite(playerBoats[0].x + playerBoats.length * 16, playerBoats[0].y, 'beach', 20).refreshBody();    
-            raft.depth = 1;
-            raft.setDrag(50);
-            raft.body.setMaxSpeed(this.scene.maxSpeed);
-            console.log({x: raft.body.drag.x, y: raft.body.drag.y});
-            this.scene.playerBoats.add(raft);
+            console.log('Adding raft in ('+lastChild.x + playerBoats.length * 8+', '+lastChild.y+')');
+            const raft = this.scene.physics.add.sprite(lastChild.x + playerBoats.length * 8, lastChild.y, 'beach', 20).refreshBody();    
+            this.scene.player.boat.add(raft);
+
+            const newLast = this.scene.player.boat.getChildren()[this.scene.player.boat.getChildren().length - 1];
+            newLast.depth = 1;
+            newLast.setDrag(50);
+            newLast.body.setMaxSpeed(this.scene.maxSpeed);
+            console.log({x: newLast.body.drag.x, y: newLast.body.drag.y});
             
             /* this.scene.playerBoats.setDepth(1);
             this.playerBoats.getChildren().forEach(b => b.body.setDrag(50));
@@ -44,7 +47,7 @@ class Chunk {
     
             this.playerSpeed = 2; */
 
-            this.scene.playerBoats.getChildren()[0].body.setMaxSpeed(this.scene.maxSpeed);
+            this.scene.player.boat.getChildren()[0].body.setMaxSpeed(this.scene.maxSpeed);
             this.scene.score++;
             this.people.killAndHide(people);
     
