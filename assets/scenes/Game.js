@@ -14,7 +14,6 @@ class Game extends Phaser.Scene {
             down: false,
             speed: 1,
         }
-        this.maxSpeed = 100;
         this.waveStartY = 0;
         this.waveVelocityY = -10;
         this.difficulty = 0;
@@ -162,7 +161,7 @@ class Game extends Phaser.Scene {
             `boats velocity : ${boatsVelocity}
             <br /> boats drag : ${boatsDrag}
             <br /> wave velocity Y : ${this.waveVelocityY}
-            <br /> max speed : ${this.maxSpeed}`;
+            <br /> max speed : ${this.player.maxSpeed}`;
     }
 
     create() {

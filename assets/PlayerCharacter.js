@@ -3,6 +3,7 @@ export default class PlayerCharacter {
         this.scene = scene;
         this.boat = [];
         this.characters = [];
+        this.maxSpeed = 100;
     }
 
     init() {
