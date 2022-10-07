@@ -1,5 +1,5 @@
 import Tile from "./Tile";
-import Castaway from "./Castaway";
+import Debris from "./Debris";
 
 class Chunk {
     constructor(scene, x, y) {
@@ -8,23 +8,20 @@ class Chunk {
         this.y = y;
         this.tiles = this.scene.add.group();
         this.rocks = this.scene.add.group();
-        this.people = this.scene.add.group();
+        this.resources = this.scene.add.group();
         this.isLoaded = false;
         this.rockProbability = Math.round(Math.log(scene.difficulty));
-        this.resources = [
-            new Castaway(this)
-        ];
 
         this.scene.physics.add.overlap(this.scene.player.boat.getChildren()[0], this.rocks, this.handleRockTouched, null, this);
-        this.scene.physics.add.overlap(this.scene.player.boat.getChildren()[0], this.people, this.handlePeopleTouched, null, this);
+        this.scene.physics.add.overlap(this.scene.player.boat.getChildren()[0], this.resources, this.handleResourceTouched, null, this);
         /**
          * TODO : add overlap on EVERY member of player group and not just the first one
          * OR make a hitbox object on top of player group to handle that kind of stuff (probably what you're supposed to do)
          */
     }
 
-    handlePeopleTouched(player, people) {
-        if(people.active) {
+    handleResourceTouched(player, resource) {
+        if(resource.active) {
             this.scene.maxSpeed = this.scene.maxSpeed + 20;
             const playerBoats = this.scene.player.boat.getChildren();
             const lastChild = playerBoats[playerBoats.length - 1];
@@ -51,7 +48,7 @@ class Chunk {
 
             this.scene.player.boat.getChildren()[0].body.setMaxSpeed(this.scene.maxSpeed);
             this.scene.score++;
-            this.people.killAndHide(people);
+            this.resources.killAndHide(resource);
     
         }
             // increase wave speed ?? instead of log function ?
@@ -67,7 +64,7 @@ class Chunk {
         if(this.isLoaded) {
             this.tiles.clear(true, true);
             this.rocks.clear(true, true);
-            this.people.clear(true, true);
+            this.resources.clear(true, true);
             this.isLoaded = false;
         }
     }
@@ -87,8 +84,9 @@ class Chunk {
                     /**
                      * TODO : handle spawning via SpawnController or something
                      */
-                    if(prob < this.resources[0].spawnRate) {
-                        this.resources[0].spawn();
+                    const debris = new Debris(this);
+                    if(prob < debris.spawnRate) {
+                        debris.spawn(tileX, tileY);
                     }
                     else if(prob < this.rockProbability) {
                         const rockKeys = [108, 109, 110, 111, 112, 113];
