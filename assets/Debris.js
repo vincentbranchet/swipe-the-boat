@@ -6,6 +6,7 @@ export default class Debris {
     }
 
     spawn(x, y) {
+        console.log(`Spawning debris in (${x}, ${y})`);
         let debris = this.chunk.scene.physics.add.sprite(x, y, 'water', 139).refreshBody();
         this.chunk.resources.add(debris);
     }

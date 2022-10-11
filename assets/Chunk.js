@@ -1,18 +1,18 @@
 import Tile from "./Tile";
-import Debris from "./Debris";
+import ObjectController from './ObjectController';
 
 class Chunk {
     constructor(scene, x, y) {
         this.scene = scene;
+        this.objectController = new ObjectController(this);
         this.x = x;
         this.y = y;
         this.tiles = this.scene.add.group();
-        this.rocks = this.scene.add.group();
+        this.obstacles = this.scene.add.group();
         this.resources = this.scene.add.group();
         this.isLoaded = false;
-        this.rockProbability = Math.round(Math.log(scene.difficulty));
 
-        this.scene.physics.add.overlap(this.scene.player.boat.getChildren()[0], this.rocks, this.handleRockTouched, null, this);
+        this.scene.physics.add.overlap(this.scene.player.boat.getChildren()[0], this.obstacles, this.handleRockTouched, null, this);
         this.scene.physics.add.overlap(this.scene.player.boat.getChildren()[0], this.resources, this.handleResourceTouched, null, this);
         /**
          * TODO : add overlap on EVERY member of player group and not just the first one
@@ -63,7 +63,7 @@ class Chunk {
     unload() {
         if(this.isLoaded) {
             this.tiles.clear(true, true);
-            this.rocks.clear(true, true);
+            this.obstacles.clear(true, true);
             this.resources.clear(true, true);
             this.isLoaded = false;
         }
@@ -76,25 +76,14 @@ class Chunk {
                     const tileX = (this.x * (this.scene.chunkSize * this.scene.tileSize)) + (x * this.scene.tileSize);
                     const tileY = (this.y * (this.scene.chunkSize * this.scene.tileSize)) + (y * this.scene.tileSize);
 
-                    const prob = (Math.random() * 100);
                     let texture = {set: 'water', key: 5};
                     let tile = new Tile(this.scene, tileX, tileY, texture.set, texture.key);
                     this.tiles.add(tile);
 
+                    this.objectController.spawnObstacleOrResource(tileX, tileY);
                     /**
-                     * TODO : handle spawning via SpawnController or something
+                     * TODO : split object spawning logic from tile generation logic. We want objects not be tied to tiles position or size.
                      */
-                    const debris = new Debris(this);
-                    if(prob < debris.spawnRate) {
-                        debris.spawn(tileX, tileY);
-                    }
-                    else if(prob < this.rockProbability) {
-                        const rockKeys = [108, 109, 110, 111, 112, 113];
-                        const key = rockKeys[Math.floor(Math.random()*rockKeys.length)];
-                        let rock = this.scene.physics.add.sprite(tileX, tileY, 'water', key).refreshBody();
-                        rock.depth = 20;
-                        this.rocks.add(rock);
-                    }
                 }
             }
             this.isLoaded = true;
