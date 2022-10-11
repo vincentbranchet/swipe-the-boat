@@ -22,7 +22,7 @@ class Chunk {
 
     handleResourceTouched(player, resource) {
         if(resource.active) {
-            this.scene.maxSpeed = this.scene.maxSpeed + 20;
+            this.scene.player.maxSpeed = this.scene.player.maxSpeed + 20;
             const playerBoats = this.scene.player.boat.getChildren();
             const lastChild = playerBoats[playerBoats.length - 1];
 
@@ -46,7 +46,7 @@ class Chunk {
     
             this.playerSpeed = 2; */
 
-            this.scene.player.boat.getChildren()[0].body.setMaxSpeed(this.scene.maxSpeed);
+            this.scene.player.boat.getChildren()[0].body.setMaxSpeed(this.scene.player.maxSpeed);
             this.scene.score++;
             this.resources.killAndHide(resource);
     
