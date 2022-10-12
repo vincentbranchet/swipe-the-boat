@@ -19,6 +19,8 @@ class Game extends Phaser.Scene {
         this.difficulty = 0;
         this.score = 0;
         this.debug = document.getElementById('debug');
+        // store resources objects here
+        // store obstacles objects here
     }
 
     init() {
