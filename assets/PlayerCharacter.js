@@ -19,4 +19,26 @@ export default class PlayerCharacter {
         this.characters.add(adam);
         this.characters.setDepth(10);
     }
+
+    /**
+     * Callback called when the player collides with a debris.
+     * Context : Debris
+     */
+    handleTouchedDebris() {
+        console.log('Player has touched a debris.');
+        if(this.body.active) {
+            const player = this.chunk.scene.player;
+            const boat = player.boat.getChildren()[0];
+            const newSize = {width: Math.round(boat.width * 1.1), height: Math.round(boat.height * 1.1)};
+            const currentZoom = this.chunk.scene.cameras.main.zoom;
+            
+            player.maxSpeed = player.maxSpeed + 20;
+            boat.width = boat.displayWidth = newSize.width;
+            boat.height = boat.displayHeight = newSize.height;
+
+            this.chunk.scene.score++;
+            this.chunk.scene.cameras.main.setZoom(currentZoom - 0.05);
+            this.body.destroy();
+        }
+    }
 }

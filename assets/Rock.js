@@ -3,7 +3,7 @@ export default class Rock {
     constructor(chunk) {
         this.body = null;
         this.chunk = chunk;
-        this.spawnRate = Math.round(Math.log(chunk.scene.difficulty));
+        this.spawnRate = Math.round(Math.log(chunk.scene.difficulty) - 1);
         this.tilemapKeys = [108, 109, 110, 111, 112, 113];
     }
 
