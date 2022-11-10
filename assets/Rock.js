@@ -14,7 +14,7 @@ export default class Rock {
         
         const playerBoats = this.chunk.scene.player.boat.getChildren();
         playerBoats.forEach(boat => {
-            this.chunk.scene.physics.add.overlap(boat, this.body, this.handlePlayerCollision, null, this);
+            this.chunk.scene.physics.add.overlap(boat.body, this.body, this.handlePlayerCollision, null, this);
         });
     }
 
