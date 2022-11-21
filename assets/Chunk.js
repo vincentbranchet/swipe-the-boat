@@ -28,14 +28,10 @@ class Chunk {
                     let texture = {set: 'water', key: 5};
                     let tile = new Tile(this.scene, tileX, tileY, texture.set, texture.key);
                     this.tiles.add(tile);
-
-                    this.objectController.spawnObstacleOrResource(tileX, tileY);
-                    /**
-                     * TODO : split object spawning logic from tile generation logic. We want objects not be tied to tiles position or size.
-                     */
                 }
             }
             this.objectController.spawnRocks(this);
+            this.objectController.spawnDebris(this);
             this.isLoaded = true;
         }
     }

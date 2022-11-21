@@ -54,6 +54,57 @@ export default class ObjectController {
                 {lv: 5, min: 0, max: 0},
             ]},
         ];
+
+        this.debrisSpawnRanges = [
+            {id: 1, key: 139, ranges: [
+                {lv: 0, min: 0, max: 0},
+                {lv: 1, min: 0, max: 1},
+                {lv: 2, min: 0, max: 2},
+                {lv: 3, min: 1, max: 2},
+                {lv: 4, min: 1, max: 3},
+                {lv: 5, min: 1, max: 3},
+            ]},
+            {id: 2, key: 139, ranges: [
+                {lv: 0, min: 0, max: 0},
+                {lv: 1, min: 0, max: 1},
+                {lv: 2, min: 0, max: 2},
+                {lv: 3, min: 1, max: 2},
+                {lv: 4, min: 1, max: 3},
+                {lv: 5, min: 1, max: 3},
+            ]},
+            {id: 3, key: 139, ranges: [
+                {lv: 0, min: 0, max: 0},
+                {lv: 1, min: 0, max: 1},
+                {lv: 2, min: 0, max: 2},
+                {lv: 3, min: 1, max: 2},
+                {lv: 4, min: 1, max: 3},
+                {lv: 5, min: 1, max: 3},
+            ]},
+            {id: 4, key: 139, ranges: [
+                {lv: 0, min: 0, max: 0},
+                {lv: 1, min: 0, max: 1},
+                {lv: 2, min: 0, max: 2},
+                {lv: 3, min: 1, max: 2},
+                {lv: 4, min: 1, max: 3},
+                {lv: 5, min: 1, max: 3},
+            ]},
+            {id: 5, key: 139, ranges: [
+                {lv: 0, min: 0, max: 0},
+                {lv: 1, min: 0, max: 1},
+                {lv: 2, min: 0, max: 2},
+                {lv: 3, min: 1, max: 2},
+                {lv: 4, min: 1, max: 3},
+                {lv: 5, min: 1, max: 3},
+            ]},
+            {id: 6, key: 139, ranges: [
+                {lv: 0, min: 0, max: 0},
+                {lv: 1, min: 0, max: 1},
+                {lv: 2, min: 0, max: 2},
+                {lv: 3, min: 1, max: 2},
+                {lv: 4, min: 1, max: 3},
+                {lv: 5, min: 1, max: 3},
+            ]},
+        ];
     }
 
     spawnObstacleOrResource(x, y) {
@@ -83,6 +134,27 @@ export default class ObjectController {
                         const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
                         const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
                         newRock.spawn(x, y);
+                    }
+                }
+            });
+        }
+    }
+
+    spawnDebris(chunk) {
+        if(chunk) {
+            const lv = chunk.scene.difficulty;
+
+            this.debrisSpawnRanges.forEach(debris => {
+                const ranges = debris.ranges.find(d => d.lv === lv);
+                if(ranges && (ranges.min !== 0 && ranges.max !== 0)) {
+                    const toSpawn = Math.round(Math.random() * (ranges.max - ranges.min) + ranges.min);
+                    console.log(`Spawning ${toSpawn} debris of id ${debris.id}`);
+        
+                    for(let i = 0; i < toSpawn; i++) {
+                        const newDebris = new Debris(chunk, debris.key);
+                        const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
+                        const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
+                        newDebris.spawn(x, y);
                     }
                 }
             });
