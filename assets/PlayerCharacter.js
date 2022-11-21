@@ -58,4 +58,11 @@ export default class PlayerCharacter {
             this.body.destroy();
         }
     }
+
+    handleTouchedRock() {
+        console.log(`Player has touched a rock at ${this.body.x}, ${this.body.y}`);
+        
+        this.chunk.scene.scene.stop();
+        this.chunk.scene.scene.start('GameOver');
+    }
 }
