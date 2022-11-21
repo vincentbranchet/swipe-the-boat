@@ -163,7 +163,8 @@ class Game extends Phaser.Scene {
             `boats velocity : ${boatsVelocity}
             <br /> boats drag : ${boatsDrag}
             <br /> wave velocity Y : ${this.waveVelocityY}
-            <br /> max speed : ${this.player.maxSpeed}`;
+            <br /> max speed : ${this.player.maxSpeed}
+            <br /> difficulty : ${this.difficulty}`;
     }
 
     create() {

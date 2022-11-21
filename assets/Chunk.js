@@ -35,8 +35,37 @@ class Chunk {
                      */
                 }
             }
+            this.objectController.spawnRocks(this);
             this.isLoaded = true;
         }
+    }
+
+    /**
+     * Returns chunk minimum X position in true pixels
+     */
+    get minX() {
+        return (this.x * (this.scene.chunkSize * this.scene.tileSize));
+    }
+
+    /**
+     * Returns chunk maximum X position in true pixels
+     */
+    get maxX() {
+        return (this.x * (this.scene.chunkSize * this.scene.tileSize)) + (this.scene.chunkSize * this.scene.tileSize);
+    }
+
+    /**
+     * Returns chunk minimum Y position in true pixels
+     */
+    get minY() {
+        return (this.y * (this.scene.chunkSize * this.scene.tileSize));
+    }
+
+    /**
+     * Returns chunk maximum Y position in true pixels
+     */
+    get maxY() {
+        return (this.y * (this.scene.chunkSize * this.scene.tileSize)) + (this.scene.chunkSize * this.scene.tileSize);
     }
 }
 
