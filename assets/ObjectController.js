@@ -5,7 +5,7 @@ export default class ObjectController {
     constructor(chunk) {
         this.chunk = chunk;
         this.rocksSpawnRanges = [
-            {id: 1, key: 112, ranges: [
+            {id: 1, size: 1, key: 112, ranges: [
                 {lv: 0, min: 0, max: 0},
                 {lv: 1, min: 0, max: 1},
                 {lv: 2, min: 0, max: 2},
@@ -13,7 +13,7 @@ export default class ObjectController {
                 {lv: 4, min: 2, max: 5},
                 {lv: 5, min: 3, max: 7},
             ]},
-            {id: 2, key: 109, ranges: [
+            {id: 2, size: 2, key: 109, ranges: [
                 {lv: 0, min: 0, max: 0},
                 {lv: 1, min: 0, max: 0},
                 {lv: 2, min: 0, max: 0},
@@ -21,7 +21,7 @@ export default class ObjectController {
                 {lv: 4, min: 0, max: 0},
                 {lv: 5, min: 0, max: 0},
             ]},
-            {id: 3, key: 113, ranges: [
+            {id: 3, size: 3, key: 113, ranges: [
                 {lv: 0, min: 0, max: 0},
                 {lv: 1, min: 0, max: 0},
                 {lv: 2, min: 0, max: 0},
@@ -29,7 +29,7 @@ export default class ObjectController {
                 {lv: 4, min: 0, max: 0},
                 {lv: 5, min: 0, max: 0},
             ]},
-            {id: 4, key: 108, ranges: [
+            {id: 4, size: 4, key: 108, ranges: [
                 {lv: 0, min: 0, max: 0},
                 {lv: 1, min: 0, max: 0},
                 {lv: 2, min: 0, max: 0},
@@ -37,7 +37,7 @@ export default class ObjectController {
                 {lv: 4, min: 0, max: 0},
                 {lv: 5, min: 0, max: 0},
             ]},
-            {id: 5, key: 111, ranges: [
+            {id: 5, size: 5, key: 111, ranges: [
                 {lv: 0, min: 0, max: 0},
                 {lv: 1, min: 0, max: 0},
                 {lv: 2, min: 0, max: 0},
@@ -45,7 +45,7 @@ export default class ObjectController {
                 {lv: 4, min: 0, max: 0},
                 {lv: 5, min: 0, max: 0},
             ]},
-            {id: 6, key: 110, ranges: [
+            {id: 6, size: 6, key: 110, ranges: [
                 {lv: 0, min: 0, max: 0},
                 {lv: 1, min: 0, max: 0},
                 {lv: 2, min: 0, max: 0},
@@ -120,16 +120,31 @@ export default class ObjectController {
                     console.log(`Spawning ${toSpawn} rocks of id ${rock.id}`);
         
                     for(let i = 0; i < toSpawn; i++) {
-                        const newRock = new Rock(chunk, rock.key);
                         const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
                         const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
-                        newRock.spawn(x, y);
+
+                        const newRock = new Rock(chunk.scene, x, y, rock);
+                        // If we don't add it to both physics and scene it doesn't show up on screen
+                        chunk.scene.add.existing(newRock);
+                        chunk.scene.physics.add.existing(newRock);
+                        newRock.body.depth = 20;
+
+                        /**
+                         * TODO : fix broken collisions
+                         */
+                        const playerBoats = chunk.scene.player.boat.getChildren();
+                        playerBoats.forEach(boat => {
+                            chunk.scene.physics.add.overlap(boat, newRock.body, chunk.scene.player.handleTouchedRock, null, this);
+                        });
                     }
                 }
             });
         }
     }
 
+    /**
+     * TODO : same development as for rocks with Debris inheriting Phaser.GameObject.Sprite
+     */
     spawnDebris(chunk) {
         if(chunk) {
             const lv = chunk.scene.difficulty;

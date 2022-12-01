@@ -6,6 +6,7 @@ export default class PlayerCharacter {
         this.maxSpeed = 100;
         this.debutWidth = 10;
         this.debutHeight = 20;
+        this.size = 1;
     }
 
     init() {
@@ -30,6 +31,10 @@ export default class PlayerCharacter {
     }
 
     /**
+     * TODO : clean overlap callbacks code to fetch bodies properly
+     */
+
+    /**
      * Callback called when the player collides with a debris.
      * Context : Debris
      */
@@ -46,12 +51,13 @@ export default class PlayerCharacter {
             console.log(`Player body current size is ${boat.body.width} x ${boat.body.height}`);
             
             player.maxSpeed = player.maxSpeed + 20;
+            player.size = player.size + 1;
             boat.body.setSize(newBodySize.width, newBodySize.width);
             boat.displayWidth = newDisplaySize.width;
             boat.displayHeight = newDisplaySize.height;
             boat.body.setMaxSpeed(player.maxSpeed);
 
-            console.log(`Changed player body size to ${boat.width} x ${boat.height}`);
+            console.log(`Changed player body size to ${boat.body.width} x ${boat.body.height}`);
 
             this.chunk.scene.score++;
             this.chunk.scene.cameras.main.setZoom(currentZoom - 0.05);
@@ -59,10 +65,22 @@ export default class PlayerCharacter {
         }
     }
 
-    handleTouchedRock() {
+    handleTouchedRock(boat, rock) {
         console.log(`Player has touched a rock at ${this.body.x}, ${this.body.y}`);
+        const player = this.chunk.scene.player;
+        console.log(rock);
+        console.log(`(${player.size}, ${rock.size})`);
+
+        if(player.size > rock.size) {
+            rock.body.destroy();
+            /**
+             * TODO : play animation
+             */
+        }
+        else {
+            this.chunk.scene.scene.stop();
+            this.chunk.scene.scene.start('GameOver');
+        }
         
-        this.chunk.scene.scene.stop();
-        this.chunk.scene.scene.start('GameOver');
     }
 }
