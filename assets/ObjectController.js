@@ -129,12 +129,9 @@ export default class ObjectController {
                         chunk.scene.physics.add.existing(newRock);
                         newRock.body.depth = 20;
 
-                        /**
-                         * TODO : fix broken collisions
-                         */
                         const playerBoats = chunk.scene.player.boat.getChildren();
                         playerBoats.forEach(boat => {
-                            chunk.scene.physics.add.overlap(boat, newRock.body, chunk.scene.player.handleTouchedRock, null, this);
+                            chunk.scene.physics.add.overlap(boat, newRock, chunk.scene.player.handleTouchedRock, null, this);
                         });
                     }
                 }
@@ -156,10 +153,19 @@ export default class ObjectController {
                     console.log(`Spawning ${toSpawn} debris of id ${debris.id}`);
         
                     for(let i = 0; i < toSpawn; i++) {
-                        const newDebris = new Debris(chunk, debris.key);
                         const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
                         const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
-                        newDebris.spawn(x, y);
+
+                        const newDebris = new Debris(chunk.scene, x, y, debris.key);
+                        console.log(newDebris);
+                        chunk.scene.add.existing(newDebris);
+                        chunk.scene.physics.add.existing(newDebris);
+                        newDebris.body.depth = 20;
+
+                        const playerBoats = chunk.scene.player.boat.getChildren();
+                        playerBoats.forEach(boat => {
+                            chunk.scene.physics.add.overlap(boat, newDebris, chunk.scene.player.handleTouchedDebris, null, this);
+                        });
                     }
                 }
             });

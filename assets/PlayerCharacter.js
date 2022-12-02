@@ -65,17 +65,21 @@ export default class PlayerCharacter {
         }
     }
 
+    /**
+     * Collision callback between player and rock
+     * @param {Phaser.GameObjects.Sprite} boat
+     * @param {Phaser.GameObjects.Sprite} rock 
+     */
+    /**
+     * TODO : play animation
+     * TODO : check player size from parameter (with player rewritten as instance of Sprite)
+     */
     handleTouchedRock(boat, rock) {
-        console.log(`Player has touched a rock at ${this.body.x}, ${this.body.y}`);
         const player = this.chunk.scene.player;
-        console.log(rock);
-        console.log(`(${player.size}, ${rock.size})`);
+        console.log(`Player has touched a rock at ${rock.x}, ${rock.y}. (P Size : ${player.size}, R Size : ${rock.size})`);
 
         if(player.size > rock.size) {
-            rock.body.destroy();
-            /**
-             * TODO : play animation
-             */
+            rock.destroy();
         }
         else {
             this.chunk.scene.scene.stop();
