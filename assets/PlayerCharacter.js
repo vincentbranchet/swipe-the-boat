@@ -31,17 +31,14 @@ export default class PlayerCharacter {
     }
 
     /**
-     * TODO : clean overlap callbacks code to fetch bodies properly
+     * Collision callback between player and debris
+     * @param {Phaser.GameObjects.Sprite} boat
+     * @param {Phaser.GameObjects.Sprite} debris
      */
-
-    /**
-     * Callback called when the player collides with a debris.
-     * Context : Debris
-     */
-    handleTouchedDebris() {
+    handleTouchedDebris(boat, debris) {
         console.log('Player has touched a debris.');
         
-        if(this.body.active) {
+        if(debris.active) {
             const player = this.chunk.scene.player;
             const boat = player.boat.getChildren()[0];
             const newBodySize = {width: Math.round(boat.body.width * 1.1), height: Math.round(boat.body.height * 1.1)};
@@ -61,7 +58,7 @@ export default class PlayerCharacter {
 
             this.chunk.scene.score++;
             this.chunk.scene.cameras.main.setZoom(currentZoom - 0.05);
-            this.body.destroy();
+            debris.destroy();
         }
     }
 

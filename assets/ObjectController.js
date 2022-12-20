@@ -139,9 +139,6 @@ export default class ObjectController {
         }
     }
 
-    /**
-     * TODO : same development as for rocks with Debris inheriting Phaser.GameObject.Sprite
-     */
     spawnDebris(chunk) {
         if(chunk) {
             const lv = chunk.scene.difficulty;
@@ -157,7 +154,6 @@ export default class ObjectController {
                         const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
 
                         const newDebris = new Debris(chunk.scene, x, y, debris.key);
-                        console.log(newDebris);
                         chunk.scene.add.existing(newDebris);
                         chunk.scene.physics.add.existing(newDebris);
                         newDebris.body.depth = 20;
