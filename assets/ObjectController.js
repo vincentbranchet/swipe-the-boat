@@ -110,7 +110,6 @@ export default class ObjectController {
     spawnRocks(chunk) {
         if(chunk) {
             const lv = chunk.scene.difficulty;
-            console.log(`Checking for rocks to spawn in chunk (${chunk.x}, ${chunk.y}) (level ${lv})`);
              // Each rock has a range based on difficulty level
              // For each rock, spawn in their range on random (x, y) belonging to chunk
             this.rocksSpawnRanges.forEach(rock => {
@@ -129,10 +128,7 @@ export default class ObjectController {
                         chunk.scene.physics.add.existing(newRock);
                         newRock.body.depth = 20;
 
-                        const playerBoats = chunk.scene.player.boat.getChildren();
-                        playerBoats.forEach(boat => {
-                            chunk.scene.physics.add.overlap(boat, newRock, chunk.scene.player.handleTouchedRock, null, this);
-                        });
+                        chunk.scene.physics.add.overlap(chunk.scene.player.boat, newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
                     }
                 }
             });
@@ -142,7 +138,6 @@ export default class ObjectController {
     spawnDebris(chunk) {
         if(chunk) {
             const lv = chunk.scene.difficulty;
-            console.log(`Checking for debris to spawn in chunk (${chunk.x}, ${chunk.y}) (level ${lv})`);
             this.debrisSpawnRanges.forEach(debris => {
                 const ranges = debris.ranges.find(d => d.lv === lv);
                 if(ranges && (ranges.min !== 0 && ranges.max !== 0)) {
@@ -158,10 +153,7 @@ export default class ObjectController {
                         chunk.scene.physics.add.existing(newDebris);
                         newDebris.body.depth = 20;
 
-                        const playerBoats = chunk.scene.player.boat.getChildren();
-                        playerBoats.forEach(boat => {
-                            chunk.scene.physics.add.overlap(boat, newDebris, chunk.scene.player.handleTouchedDebris, null, this);
-                        });
+                        chunk.scene.physics.add.overlap(chunk.scene.player.boat, newDebris, chunk.scene.player.handleTouchedDebris, null, chunk.scene.player);
                     }
                 }
             });

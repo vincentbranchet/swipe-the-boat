@@ -53,10 +53,10 @@ class Game extends Phaser.Scene {
     }
 
     update() {
-        const boatsObjects = this.player.boat?.getChildren();
+        const boat = this.player.boat;
         // retrieve position of chunk where follow point is
-        let snappedChunkX = (this.chunkSize * this.tileSize) * Math.round(boatsObjects[0].x / (this.chunkSize * this.tileSize));
-        let snappedChunkY = (this.chunkSize * this.tileSize) * Math.round(boatsObjects[0].y / (this.chunkSize * this.tileSize));
+        let snappedChunkX = (this.chunkSize * this.tileSize) * Math.round(boat.x / (this.chunkSize * this.tileSize));
+        let snappedChunkY = (this.chunkSize * this.tileSize) * Math.round(boat.y / (this.chunkSize * this.tileSize));
 
         snappedChunkX = snappedChunkX / this.chunkSize / this.tileSize;
         snappedChunkY = snappedChunkY / this.chunkSize / this.tileSize;
@@ -124,41 +124,26 @@ class Game extends Phaser.Scene {
 
         // touch controls
         if(this.customControls.up) {
-            this.player.boat.setVelocityY(boatsObjects[0].body.velocity.y - this.customControls.speed * Math.abs(this.customControls.up * 0.5));
+            boat.body.velocity.y = boat.body.velocity.y - this.customControls.speed * Math.abs(this.customControls.up * 0.5);
         }
         if(this.customControls.down) {
-            this.player.boat.setVelocityY(boatsObjects[0].body.velocity.y + this.customControls.speed * Math.abs(this.customControls.down * 0.5));
+            boat.body.velocity.y = boat.body.velocity.y + this.customControls.speed * Math.abs(this.customControls.down * 0.5);
         }
         if(this.customControls.right) {
-            this.player.boat.setVelocityX(boatsObjects[0].body.velocity.x + this.customControls.speed * Math.abs(this.customControls.right * 0.5));
+            boat.body.velocity.x = boat.body.velocity.x + this.customControls.speed * Math.abs(this.customControls.right * 0.5);
         }
         if(this.customControls.left) {
-            this.player.boat.setVelocityX(boatsObjects[0].body.velocity.x - this.customControls.speed * Math.abs(this.customControls.left * 0.5));
+            boat.body.velocity.x = boat.body.velocity.x - this.customControls.speed * Math.abs(this.customControls.left * 0.5);
         }
 
-        // keyboard controls
-        if (this.keyZ.isDown) {
-            this.player.boat.y -= this.playerSpeed;
-        }
-        if (this.keyS.isDown) {
-            this.player.boat.y += this.playerSpeed;
-        }
-        if (this.keyQ.isDown) {
-            this.player.boat.x -= this.playerSpeed;
-        }
-        if (this.keyD.isDown) {
-            this.player.boat.x += this.playerSpeed;
-        }
-
-        this.player.characters.setX(boatsObjects[0].x);
-        this.player.characters.setY(boatsObjects[0].y - 16);
-        this.cameras.main.centerOn(boatsObjects[0].x, boatsObjects[0].y - 100);
+        this.player.body.x = boat.x - 16;
+        this.player.body.y = boat.y - 32;
+        this.cameras.main.centerOn(boat.x, boat.y - 100);
 
         let boatsVelocity = '', boatsDrag = '';
-        boatsObjects.forEach(boat => {
-            boatsVelocity = boatsVelocity.concat(`(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)}),`);
-            boatsDrag = boatsDrag.concat(`(${Math.round(boat.body.drag.x)}, ${Math.round(boat.body.drag.y)}),`);
-        });
+        boatsVelocity = boatsVelocity.concat(`(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)}),`);
+        boatsDrag = boatsDrag.concat(`(${Math.round(boat.body.drag.x)}, ${Math.round(boat.body.drag.y)}),`);
+
         this.debug.innerHTML = 
             `boats velocity : ${boatsVelocity}
             <br /> boats drag : ${boatsDrag}
@@ -183,9 +168,8 @@ class Game extends Phaser.Scene {
         this.cameras.main.setZoom(1.5);
 
         // player
-        this.player = new PlayerCharacter(this);
+        this.player = new PlayerCharacter(this, 0, -100);
         this.player.init();
-        this.playerSpeed = 2;
 
         // tsunami
         this.wave = this.add.group();
