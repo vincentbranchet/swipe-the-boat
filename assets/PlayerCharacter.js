@@ -36,10 +36,11 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
         if(debris.active) {
             const boat = this.boat;
             const newBodySize = {width: Math.round(boat.body.width * 1.1), height: Math.round(boat.body.height * 1.1)};
-            const newDisplaySize = {width: Math.round(boat.width * 1.1), height: Math.round(boat.height * 1.1)};
+            const newDisplaySize = {width: Math.round(boat.displayWidth * 1.1), height: Math.round(boat.displayHeight * 1.1)};
             const currentZoom = this.scene.cameras.main.zoom;
 
             console.log(`Player body current size is ${boat.body.width} x ${boat.body.height}`);
+            console.log(`Player sprite current size is ${boat.displayWidth} x ${boat.displayHeight}`);
             
             this.maxSpeed = this.maxSpeed + 20;
             this.size = this.size + 1;
@@ -48,8 +49,9 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
             boat.displayHeight = newDisplaySize.height;
             boat.body.setMaxSpeed(this.maxSpeed);
 
-            console.log(`Changed player body size to ${boat.body.width} x ${boat.body.height}`);
-
+            console.log(`Player body current size is ${boat.body.width} x ${boat.body.height}`);
+            console.log(`Player sprite current size is ${boat.displayWidth} x ${boat.displayHeight}`);
+            
             this.scene.score++;
             this.scene.cameras.main.setZoom(currentZoom - 0.05);
             debris.destroy();
