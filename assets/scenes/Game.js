@@ -40,7 +40,7 @@ class Game extends Phaser.Scene {
 
     handleWaveAcceleration() {
         if(this.level > 0) {
-            this.waveVelocityY -= this.level * 2;
+            this.waveVelocityY -= this.level * 10;
             const waveTiles = this.wave.getChildren();
             waveTiles.forEach((tile) => {
                 tile.body.velocity.y = this.waveVelocityY;
@@ -116,13 +116,10 @@ class Game extends Phaser.Scene {
         }
 
         // increment difficulty & wave speed depending on wave distance from start
-        //console.log(`Current level is ${this.difficulty}`);
         const waveDist = Math.round(Math.abs(maxXTile.y)) - this.waveStartY;
-        const currentLevel = Math.floor(waveDist / 500);
-        
+        const currentLevel = Math.floor(waveDist / 500);    
         if(currentLevel > 0 && currentLevel > this.level) {
             this.level = currentLevel;
-            this.handleWaveAcceleration();
         }
 
         // touch controls

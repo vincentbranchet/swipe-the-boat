@@ -52,6 +52,7 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
             console.log(`Player body current size is ${boat.body.width} x ${boat.body.height}`);
             console.log(`Player sprite current size is ${boat.displayWidth} x ${boat.displayHeight}`);
             
+            this.scene.handleWaveAcceleration();
             this.scene.score++;
             this.scene.cameras.main.setZoom(currentZoom - 0.05);
             debris.destroy();
