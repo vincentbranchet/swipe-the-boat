@@ -16,7 +16,7 @@ class Game extends Phaser.Scene {
         }
         this.waveStartY = 0;
         this.waveVelocityY = -10;
-        this.difficulty = 0;
+        this.level = 0;
         this.score = 0;
         this.debug = document.getElementById('debug');
         // store resources objects here
@@ -38,17 +38,16 @@ class Game extends Phaser.Scene {
         this.scene.start('GameOver');
     }
 
-    handleWaveAcceleration(d) {
-        if(d > 0) {
-            this.difficulty = d;
-            this.waveVelocityY -= this.difficulty * 2;
+    handleWaveAcceleration() {
+        if(this.level > 0) {
+            this.waveVelocityY -= this.level * 2;
             const waveTiles = this.wave.getChildren();
             waveTiles.forEach((tile) => {
                 tile.body.velocity.y = this.waveVelocityY;
             });
         }
         else {
-            this.difficulty = 0;
+            this.level = 0;
         }
     }
 
@@ -117,9 +116,13 @@ class Game extends Phaser.Scene {
         }
 
         // increment difficulty & wave speed depending on wave distance from start
-        const d = Math.round(Math.log(Math.abs(Math.round(maxXTile.y + 1)) - Math.round(Math.abs(this.waveStartY))));
-        if(d > 0 && d > this.difficulty) {
-            this.handleWaveAcceleration(d);
+        //console.log(`Current level is ${this.difficulty}`);
+        const waveDist = Math.round(Math.abs(maxXTile.y)) - this.waveStartY;
+        const currentLevel = Math.floor(waveDist / 500);
+        
+        if(currentLevel > 0 && currentLevel > this.level) {
+            this.level = currentLevel;
+            this.handleWaveAcceleration();
         }
 
         // touch controls
@@ -149,7 +152,7 @@ class Game extends Phaser.Scene {
             <br /> boats drag : ${boatsDrag}
             <br /> wave velocity Y : ${this.waveVelocityY}
             <br /> max speed : ${this.player.maxSpeed}
-            <br /> difficulty : ${this.difficulty}`;
+            <br /> level : ${this.level}`;
     }
 
     create() {

@@ -109,7 +109,7 @@ export default class ObjectController {
 
     spawnRocks(chunk) {
         if(chunk) {
-            const lv = chunk.scene.difficulty;
+            const lv = chunk.scene.level;
              // Each rock has a range based on difficulty level
              // For each rock, spawn in their range on random (x, y) belonging to chunk
             this.rocksSpawnRanges.forEach(rock => {
