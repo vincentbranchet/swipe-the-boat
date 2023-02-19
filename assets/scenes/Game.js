@@ -18,9 +18,14 @@ class Game extends Phaser.Scene {
         this.waveVelocityY = -10;
         this.level = 0;
         this.score = 0;
+        this.totalDistance = null;
+        this.playerStartX = 0;
+        this.playerStartY = -100;
         this.debug = document.getElementById('debug');
-        // store resources objects here
-        // store obstacles objects here
+        this.UI = {
+            totalDistance: document.getElementById('totalDistance'),
+            untilNextLvDistance: document.getElementById('untilNextLvDistance')
+        };
     }
 
     init() {
@@ -136,9 +141,13 @@ class Game extends Phaser.Scene {
             boat.body.velocity.x = boat.body.velocity.x - this.customControls.speed * Math.abs(this.customControls.left * 0.5);
         }
 
+        // camera
         this.player.body.x = boat.x - 16;
         this.player.body.y = boat.y - 32;
         this.cameras.main.centerOn(boat.x, boat.y - 100);
+
+        // UI
+        const totalPlayerDist = Math.round(Math.abs(this.player.body.y) - Math.abs(this.playerStartY)) - 32;
 
         let boatsVelocity = '', boatsDrag = '';
         boatsVelocity = boatsVelocity.concat(`(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)}),`);
@@ -150,6 +159,8 @@ class Game extends Phaser.Scene {
             <br /> wave velocity Y : ${this.waveVelocityY}
             <br /> max speed : ${this.player.maxSpeed}
             <br /> level : ${this.level}`;
+        this.UI.totalDistance.innerHTML = totalPlayerDist;
+        //this.UI.untilNextLvDistance.innerHTML = ?
     }
 
     create() {
@@ -168,7 +179,7 @@ class Game extends Phaser.Scene {
         this.cameras.main.setZoom(1.5);
 
         // player
-        this.player = new PlayerCharacter(this, 0, -100);
+        this.player = new PlayerCharacter(this, this.playerStartX, this.playerStartY);
         this.player.init();
 
         // tsunami
@@ -206,7 +217,7 @@ class Game extends Phaser.Scene {
         this.load.spritesheet('beach', 'assets/beach.png', {
             frameWidth: 32,
             frameHeight: 32
-        })
+        });
     }
 
     getChunk(x, y) {

@@ -22,19 +22,62 @@
             color: white;
             z-index: 10
         }
+        .main-container {
+            position: relative;
+            max-width: 500px;
+            max-height: 700px;
+            margin: auto;
+        }
+        #game {
+            padding-top: 1rem;
+            width:'100%'; 
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start;
+        }
+        .ui-container {
+            position: absolute;
+            background-color: #984f00;
+            border-radius: 5px;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+        .ui-line {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .ui-data {
+            margin: 5px 10px;
+        }
+        .ui-data img {
+            max-width: 20px;
+            height: auto;
+        }
+        #ui-distances {
+            width: 100px;
+            bottom: 0%;
+            left: 3%;
+        }
     </style>
 </head>
 <body>
-    <div id="main" style="padding-top: 1rem; width:'100%'; display: flex; justify-content: center; align-items: flex-start;">
+    <div class="main-container">
+        <div id="game"></div>
+        <div class="ui-container" id="ui-distances">
+            <div class="ui-line">
+                <div class="ui-data">
+                    <img src="./assets/level-up.png" alt="Next LV in">
+                </div>
+                <div  class="ui-data" id="untilNextLvDistance"></div>    
+            </div>
+            <div class="ui-line">
+                <div class="ui-data">
+                    <img src="./assets/trophy.png" alt="Score">
+                </div>
+                <div class="ui-data" id="totalDistance"></div>
+            </div>
+        </div>
     </div>
-<!-- OLD HACKY START MENU NOW WIP IN STARTMENU SCENE     
-    <div id="start-screen">
-        <div id="title">DESPERATE RAFT</div>
-        <p>Rescue as many people as you can before the wave hits you</p>
-        <p>Don't hit the rocks</p>
-        <button id="start-btn" onclick="startGame()">START</button>
-        <p style="font-style: italic;">Control your raft by dragging/scrolling the screen with your finger or mouse. You can also use WASD/ZQSD keys.</p>
-    </div> -->
     <div id="debug" style="text-align:center"></div>
 
     <script type="text/javascript" src="./dist/phaser.js"></script>
@@ -47,7 +90,7 @@
 
         var config = {
             type: Phaser.WEBGL,
-            parent: "main",
+            parent: "game",
             width: globalWidth,
             height: globalHeight,
             physics: {
@@ -67,21 +110,6 @@
             }
         };
         var game = new Phaser.Game(config);
-
-/*      OLD HACKY GAME OVER SCREEN TO REPLACE WITH GAME OVER SCENE
-        let gameOverScreen = document.createElement('div');
-        gameOverScreen.innerHTML = "<p>Game Over</p><p>Score : <span id='score-container'></span></p><button onclick='restart()'>Restart</button>";
-        gameOverScreen.id = "game-over";
-        gameOverScreen.style.top = (globalHeight * 0.5) + 'px';
-        gameOverScreen.style.width = globalWidth * 0.8 + 'px';
-        main.append(gameOverScreen);
-
-        function restart() {
-            location.reload();
-        }
-
-        // setting a few functions globally (don't judge)
-        window.restart = restart; */
     </script>
 </body>
 </html>
