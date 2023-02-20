@@ -66,11 +66,15 @@ export default class ObjectController {
                 {lv: 4, min: 1, max: 3},
                 {lv: 5, min: 1, max: 3},
             ]};
+            
+            /**
+              * TODO : add ranges for each game lv (both debris & rocks)
+              */
     }
 
     spawnRocks(chunk) {
         if(chunk) {
-            const lv = chunk.scene.level;
+            const lv = chunk.scene.level.id;
              // Each rock has a range based on difficulty level
              // For each rock, spawn in their range on random (x, y) belonging to chunk
             this.rocksSpawnRanges.forEach(rock => {
@@ -101,7 +105,7 @@ export default class ObjectController {
 
     spawnDebris(chunk) {
         if(chunk) {
-            const lv = chunk.scene.level;
+            const lv = chunk.scene.level.id;
             
             const ranges = this.debrisSpawnRanges.ranges.find(d => d.lv === lv);
             if(ranges && (ranges.min !== 0 || ranges.max !== 0)) {

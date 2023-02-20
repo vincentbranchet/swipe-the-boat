@@ -16,7 +16,7 @@ class Game extends Phaser.Scene {
         }
         this.waveStartY = 0;
         this.waveVelocityY = -10;
-        this.level = 0;
+        this.level = {id: 0, threshold: 100, waveVelocityY: -10};
         this.score = 0;
         this.totalDistance = null;
         this.playerStartX = 0;
@@ -26,6 +26,19 @@ class Game extends Phaser.Scene {
             totalDistance: document.getElementById('totalDistance'),
             untilNextLvDistance: document.getElementById('untilNextLvDistance')
         };
+        this.levels = [
+            {id: 0, threshold: 100, waveVelocityY: -10},
+            {id: 1, threshold: 250, waveVelocityY: -20},
+            {id: 2, threshold: 500, waveVelocityY: -30},
+            {id: 3, threshold: 1000, waveVelocityY: -50},
+            {id: 4, threshold: 2000, waveVelocityY: -75},
+            {id: 5, threshold: 5000, waveVelocityY: -100},
+            {id: 6, threshold: 7500, waveVelocityY: -150},
+            {id: 7, threshold: 10000, waveVelocityY: -200},
+            {id: 8, threshold: 15000, waveVelocityY: -250},
+            {id: 9, threshold: 25000, waveVelocityY: -400},
+            {id: 10, threshold: 50000, waveVelocityY: -600},
+        ];
     }
 
     init() {
@@ -41,19 +54,6 @@ class Game extends Phaser.Scene {
     handleWaveTouched() {
         this.scene.stop();
         this.scene.start('GameOver');
-    }
-
-    handleWaveAcceleration() {
-        if(this.level > 0) {
-            this.waveVelocityY -= this.level * 10;
-            const waveTiles = this.wave.getChildren();
-            waveTiles.forEach((tile) => {
-                tile.body.velocity.y = this.waveVelocityY;
-            });
-        }
-        else {
-            this.level = 0;
-        }
     }
 
     update() {
@@ -120,11 +120,20 @@ class Game extends Phaser.Scene {
             }
         }
 
-        // increment difficulty & wave speed depending on wave distance from start
-        const waveDist = Math.round(Math.abs(maxXTile.y)) - this.waveStartY;
-        const currentLevel = Math.floor(waveDist / 500);    
-        if(currentLevel > 0 && currentLevel > this.level) {
-            this.level = currentLevel;
+        // level
+        const totalPlayerDist = Math.round(Math.abs(this.player.body.y) - Math.abs(this.playerStartY)) - 32;
+        const nextLv = this.levels.find(lv => lv.threshold > totalPlayerDist);
+        const untilNextLvDist = nextLv.threshold - totalPlayerDist;
+
+        if(totalPlayerDist > this.level.threshold) {
+            this.level = nextLv;
+            /**
+             * TODO : handle case where no lv is found
+             */
+            const waveTiles = this.wave.getChildren();
+            waveTiles.forEach((tile) => {
+                tile.body.velocity.y = this.level.waveVelocityY;
+            });
         }
 
         // touch controls
@@ -147,8 +156,9 @@ class Game extends Phaser.Scene {
         this.cameras.main.centerOn(boat.x, boat.y - 100);
 
         // UI
-        const totalPlayerDist = Math.round(Math.abs(this.player.body.y) - Math.abs(this.playerStartY)) - 32;
-
+        this.UI.totalDistance.innerHTML = totalPlayerDist;
+        this.UI.untilNextLvDistance.innerHTML = untilNextLvDist;
+        
         let boatsVelocity = '', boatsDrag = '';
         boatsVelocity = boatsVelocity.concat(`(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)}),`);
         boatsDrag = boatsDrag.concat(`(${Math.round(boat.body.drag.x)}, ${Math.round(boat.body.drag.y)}),`);
@@ -156,11 +166,9 @@ class Game extends Phaser.Scene {
         this.debug.innerHTML = 
             `boats velocity : ${boatsVelocity}
             <br /> boats drag : ${boatsDrag}
-            <br /> wave velocity Y : ${this.waveVelocityY}
+            <br /> wave velocity Y : ${this.level.waveVelocityY}
             <br /> max speed : ${this.player.maxSpeed}
-            <br /> level : ${this.level}`;
-        this.UI.totalDistance.innerHTML = totalPlayerDist;
-        //this.UI.untilNextLvDistance.innerHTML = ?
+            <br /> level : ${this.level.id}`;
     }
 
     create() {
@@ -187,7 +195,7 @@ class Game extends Phaser.Scene {
         for(let i = -16; i < 16; i++) {
             this.waveTile = this.physics.add.sprite(i * this.tileSize, this.waveStartY, 'water', 64).refreshBody();
             this.waveTile.depth = 20;
-            this.waveTile.setVelocityY(this.waveVelocityY);
+            this.waveTile.setVelocityY(this.level.waveVelocityY);
             this.wave.add(this.waveTile);
         }
 
