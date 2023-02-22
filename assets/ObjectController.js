@@ -136,9 +136,15 @@ export default class ObjectController {
                         // If we don't add it to both physics and scene it doesn't show up on screen
                         chunk.scene.add.existing(newRock);
                         chunk.scene.physics.add.existing(newRock);
+                        chunk.scene.rocks.add(newRock);
                         newRock.body.depth = 20;
 
                         chunk.scene.physics.add.overlap(chunk.scene.player.boat, newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
+                        const bumps = chunk.scene.player.bumps;
+                        for(let i = 0; i < bumps.length; i++) {
+                            console.log(bumps[i]);
+                            chunk.scene.physics.add.overlap(bumps[i], newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
+                        }
                     }
                 }
             });

@@ -41,8 +41,9 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
             this.size = this.size + 1;
 
             const newBumpYOffset = this.bumps.length * 8 + 32;
+            const newBump = new PlayerBump(this.scene, boat.body.x - 8, boat.body.y - newBumpYOffset);
 
-            this.bumps.push(new PlayerBump(this.scene, boat.body.x - 6, boat.body.y - newBumpYOffset));
+            this.bumps.push(newBump);
 
             debris.destroy();
         }

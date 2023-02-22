@@ -14,6 +14,8 @@ class Game extends Phaser.Scene {
             down: false,
             speed: 1,
         }
+        this.rocks = null;
+        this.wave = null;
         this.waveStartY = 0;
         this.waveVelocityY = -10;
         this.level = {id: 0, threshold: 100, waveVelocityY: -10};
@@ -155,7 +157,7 @@ class Game extends Phaser.Scene {
         this.player.body.y = boat.y - 32;
         for(let i = 0; i < this.player.bumps.length; i++) {
             const bump = this.player.bumps[i];
-            bump.body.x = boat.x - 6;
+            bump.body.x = boat.x - 8;
             bump.body.y = boat.y - (i * 8 + 32);
         }
 
@@ -196,6 +198,9 @@ class Game extends Phaser.Scene {
         // player
         this.player = new PlayerCharacter(this, this.playerStartX, this.playerStartY);
         this.player.init();
+
+        // rocks
+        this.rocks = this.add.group()
 
         // tsunami
         this.wave = this.add.group();
