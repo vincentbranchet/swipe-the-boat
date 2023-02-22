@@ -17,7 +17,6 @@ class Game extends Phaser.Scene {
         this.waveStartY = 0;
         this.waveVelocityY = -10;
         this.level = {id: 0, threshold: 100, waveVelocityY: -10};
-        this.score = 0;
         this.totalDistance = null;
         this.playerStartX = 0;
         this.playerStartY = -100;
@@ -150,9 +149,17 @@ class Game extends Phaser.Scene {
             boat.body.velocity.x = boat.body.velocity.x - this.customControls.speed * Math.abs(this.customControls.left * 0.5);
         }
 
-        // camera
+
+        // player objects position
         this.player.body.x = boat.x - 16;
         this.player.body.y = boat.y - 32;
+        for(let i = 0; i < this.player.bumps.length; i++) {
+            const bump = this.player.bumps[i];
+            bump.body.x = boat.x - 6;
+            bump.body.y = boat.y - (i * 8 + 32);
+        }
+
+        // camera
         this.cameras.main.centerOn(boat.x, boat.y - 100);
 
         // UI

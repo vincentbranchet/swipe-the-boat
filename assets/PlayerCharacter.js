@@ -1,9 +1,11 @@
 import PlayerBoat from "./PlayerBoat";
+import PlayerBump from './PlayerBump';
 
 export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'characters', 12);
         this.boat = null;
+        this.bumps = [];
         this.maxSpeed = 100;
         this.debutWidth = 10;
         this.debutHeight = 20;
@@ -35,25 +37,13 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
         
         if(debris.active) {
             const boat = this.boat;
-            const newBodySize = {width: Math.round(boat.body.width * 1.1), height: Math.round(boat.body.height * 1.1)};
-            const newDisplaySize = {width: Math.round(boat.displayWidth * 1.1), height: Math.round(boat.displayHeight * 1.1)};
-            const currentZoom = this.scene.cameras.main.zoom;
-
-            console.log(`Player body current size is ${boat.body.width} x ${boat.body.height}`);
-            console.log(`Player sprite current size is ${boat.displayWidth} x ${boat.displayHeight}`);
             
-            this.maxSpeed = this.maxSpeed + 20;
             this.size = this.size + 1;
-            boat.body.setSize(newBodySize.width, newBodySize.width);
-            boat.displayWidth = newDisplaySize.width;
-            boat.displayHeight = newDisplaySize.height;
-            boat.body.setMaxSpeed(this.maxSpeed);
 
-            console.log(`Player body current size is ${boat.body.width} x ${boat.body.height}`);
-            console.log(`Player sprite current size is ${boat.displayWidth} x ${boat.displayHeight}`);
-            
-            this.scene.score++;
-            this.scene.cameras.main.setZoom(currentZoom - 0.05);
+            const newBumpYOffset = this.bumps.length * 8 + 32;
+
+            this.bumps.push(new PlayerBump(this.scene, boat.body.x - 6, boat.body.y - newBumpYOffset));
+
             debris.destroy();
         }
     }
