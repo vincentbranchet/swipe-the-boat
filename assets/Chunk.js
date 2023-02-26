@@ -25,13 +25,12 @@ class Chunk {
                     const tileX = (this.x * (this.scene.chunkSize * this.scene.tileSize)) + (x * this.scene.tileSize);
                     const tileY = (this.y * (this.scene.chunkSize * this.scene.tileSize)) + (y * this.scene.tileSize);
 
-                    let texture = {set: 'water', key: 5};
-                    let tile = new Tile(this.scene, tileX, tileY, texture.set, texture.key);
+                    let tile = new Tile(this.scene, tileX, tileY);
                     this.tiles.add(tile);
                 }
             }
             this.objectController.spawnRocks(this);
-            this.objectController.spawnDebris(this);
+            this.objectController.spawnLoot(this);
             this.isLoaded = true;
         }
     }

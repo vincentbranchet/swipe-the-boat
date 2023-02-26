@@ -1,4 +1,4 @@
-import Debris from './Debris.js';
+import Loot from './Loot.js';
 import Rock from './Rock.js';
 
 export default class ObjectController {
@@ -85,9 +85,9 @@ export default class ObjectController {
             ]},
         ];
 
-        this.debrisData = {
+        this.lootData = {
             id: 1,
-            key: 139,
+            key: 153,
             spawnRates: [
                 {lv: 0, spawnRate: 0.0001},
                 {lv: 1, spawnRate: 0.0001},
@@ -141,9 +141,9 @@ export default class ObjectController {
                         newRock.body.size = rock.size
 
                         chunk.scene.physics.add.overlap(chunk.scene.player.boat, newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
-                        const bumps = chunk.scene.player.bumps;
-                        for(let i = 0; i < bumps.length; i++) {
-                            chunk.scene.physics.add.overlap(bumps[i], newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
+                        const shield = chunk.scene.player.shield;
+                        for(let i = 0; i < shield.length; i++) {
+                            chunk.scene.physics.add.overlap(shield[i], newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
                         }
                     }
                 }
@@ -152,40 +152,40 @@ export default class ObjectController {
     }
 
     /**
-     * Looks for debris data for current level, runs a spawn check for each tile on chunk, and spawns debris on random chunk tiles
+     * Looks for loot data for current level, runs a spawn check for each tile on chunk, and spawns loot on random chunk tiles
      * Called once on each loaded chunk
      * @param {*} chunk
      */
-    spawnDebris(chunk) {
+    spawnLoot(chunk) {
         if(chunk) {
             const lv = chunk.scene.level.id;
 
-            const debrisDataForLevel = this.debrisData.spawnRates.find(d => d.lv === lv);
-            if(debrisDataForLevel && debrisDataForLevel.spawnRate) {
+            const lootDataForLevel = this.lootData.spawnRates.find(d => d.lv === lv);
+            if(lootDataForLevel && lootDataForLevel.spawnRate) {
                 let toSpawn = 0;
 
                 for(let i = 0; i < (chunk.scene.chunkSize * chunk.scene.chunkSize); i++) {
                     const diceThrow = Math.random();
 
-                    if(diceThrow < debrisDataForLevel.spawnRate) {
+                    if(diceThrow < lootDataForLevel.spawnRate) {
                         toSpawn++;
                     }
                 }
 
                 if(toSpawn > 0) {
-                    console.log(`Spawning ${toSpawn} debris of id ${this.debrisData.id}`);
+                    console.log(`Spawning ${toSpawn} loots of id ${this.lootData.id}`);
                 }
 
                 for(let i = 0; i < toSpawn; i++) {
                     const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
                     const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
 
-                    const newDebris = new Debris(chunk.scene, x, y, this.debrisData.key);
-                    chunk.scene.add.existing(newDebris);
-                    chunk.scene.physics.add.existing(newDebris);
-                    newDebris.body.depth = 20;
+                    const newLoot = new Loot(chunk.scene, x, y, this.lootData.key);
+                    chunk.scene.add.existing(newLoot);
+                    chunk.scene.physics.add.existing(newLoot);
+                    newLoot.body.depth = 20;
 
-                    chunk.scene.physics.add.overlap(chunk.scene.player.boat, newDebris, chunk.scene.player.handleTouchedDebris, null, chunk.scene.player);
+                    chunk.scene.physics.add.overlap(chunk.scene.player.boat, newLoot, chunk.scene.player.handleTouchedLoot, null, chunk.scene.player);
                 }
             }
 

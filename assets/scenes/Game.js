@@ -1,5 +1,6 @@
 import Chunk from "../Chunk.js";
 import PlayerCharacter from "../PlayerCharacter.js";
+import WaveTile from "../WaveTile.js";
 
 class Game extends Phaser.Scene {
     constructor() {
@@ -84,17 +85,15 @@ class Game extends Phaser.Scene {
 
                     if(newChunk.x * this.chunkSize * this.tileSize < minX) {
                         for(let i = minX; i > newChunk.x * this.chunkSize * this.tileSize; i -= this.tileSize) {
-                            this.waveTile = this.physics.add.sprite(i, Math.round(maxXTile.y), 'water', 64).refreshBody();
-                            this.waveTile.depth = 20;
-                            this.waveTile.setVelocityY(this.waveVelocityY);
+                            this.waveTile = new WaveTile(this, i, Math.round(maxXTile.y));
+                            this.waveTile.body.setVelocityY(this.waveVelocityY);
                             this.wave.add(this.waveTile);
                         }
                     }
                     if(newChunk.x * this.chunkSize * this.tileSize > maxX) {
                         for(let i = maxX; i < newChunk.x * this.chunkSize * this.tileSize; i += this.tileSize) {
-                            this.waveTile = this.physics.add.sprite(i, Math.round(maxXTile.y), 'water', 64).refreshBody();
-                            this.waveTile.depth = 20;
-                            this.waveTile.setVelocityY(this.waveVelocityY);
+                            this.waveTile = new WaveTile(this, i, Math.round(maxXTile.y));
+                            this.waveTile.body.setVelocityY(this.waveVelocityY);
                             this.wave.add(this.waveTile);
                         }
                     }
@@ -155,10 +154,10 @@ class Game extends Phaser.Scene {
         // player objects position
         this.player.body.x = boat.x - 16;
         this.player.body.y = boat.y - 32;
-        for(let i = 0; i < this.player.bumps.length; i++) {
-            const bump = this.player.bumps[i];
-            bump.body.x = boat.x - (i * 8 + 12) + (8 * this.player.bumps.length / 2);
-            bump.body.y = boat.y - 32;
+        for(let i = 0; i < this.player.shield.length; i++) {
+            const shield = this.player.shield[i];
+            shield.body.x = boat.x - (i * 8 + 12) + (8 * this.player.shield.length / 2);
+            shield.body.y = boat.y - 34;
         }
 
         // camera
@@ -205,10 +204,10 @@ class Game extends Phaser.Scene {
         // tsunami
         this.wave = this.add.group();
         for(let i = -16; i < 16; i++) {
-            this.waveTile = this.physics.add.sprite(i * this.tileSize, this.waveStartY, 'water', 64).refreshBody();
-            this.waveTile.depth = 20;
-            this.waveTile.setVelocityY(this.level.waveVelocityY);
+            this.waveTile = new WaveTile(this, i * this.tileSize, this.waveStartY);
+            this.waveTile.body.setVelocityY(this.level.waveVelocityY);
             this.wave.add(this.waveTile);
+            console.log(this.wave);
         }
 
         // collisions

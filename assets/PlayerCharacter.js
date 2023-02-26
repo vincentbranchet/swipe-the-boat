@@ -1,11 +1,11 @@
 import PlayerBoat from "./PlayerBoat.js";
-import PlayerBump from './PlayerBump.js';
+import WaveTile from "./WaveTile.js";
 
 export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'characters', 12);
         this.boat = null;
-        this.bumps = [];
+        this.shield = [];
         this.maxSpeed = 100;
         this.debutWidth = 10;
         this.debutHeight = 20;
@@ -28,32 +28,32 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
     }
 
     /**
-     * Collision callback between player and debris
+     * Collision callback between player and loot
      * @param {Phaser.GameObjects.Sprite} boat
-     * @param {Phaser.GameObjects.Sprite} debris
+     * @param {Phaser.GameObjects.Sprite} loot
      */
-    handleTouchedDebris(boat, debris) {
-        console.log('Player has touched a debris.');
+    handleTouchedLoot(boat, loot) {
+        console.log('Player has touched a loot.');
 
-        if(debris.active) {
+        if(loot.active) {
             const boat = this.boat;
 
             this.size = this.size + 1;
 
-            const newBumpYOffset = 32;
-            const newBumpXOffset = (this.bumps.length * 8 + 12) + (this.bumps.length / 2 * 8);
-            const bumpWidth = this.bumps.length === 0 ? 16 : 8;
-            const bumpHeight = 16;
+            const newShieldYOffset = 34;
+            const newShieldXOffset = (this.shield.length * 8 + 12) + (this.shield.length / 2 * 8);
+            const shieldWidth = this.shield.length === 0 ? 16 : 8;
+            const shieldHeight = 16;
 
-            const newBump = new PlayerBump(this.scene, boat.body.x - newBumpXOffset, boat.body.y - newBumpYOffset);
+            const newShield = new WaveTile(this.scene, boat.body.x - newShieldXOffset, boat.body.y - newShieldYOffset);
 
-            newBump.body.size = bumpWidth;
-            newBump.displayWidth = bumpWidth;
-            newBump.displayHeight = bumpHeight;
+            newShield.body.size = shieldWidth;
+            newShield.displayWidth = shieldWidth;
+            newShield.displayHeight = shieldHeight;
 
-            this.bumps.push(newBump);
+            this.shield.push(newShield);
 
-            debris.destroy();
+            loot.destroy();
         }
     }
 
