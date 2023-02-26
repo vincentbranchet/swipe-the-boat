@@ -58,9 +58,9 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
      * TODO : play animation
      */
     handleTouchedRock(boat, rock) {
-        console.log(`Player has touched a rock at ${rock.x}, ${rock.y}. (P Size : ${this.size}, R Size : ${rock.size})`);
+        console.log(`Player has touched a rock at ${rock.x}, ${rock.y}. (P Size : ${this.size}, R breaks at : ${rock.breaksAt})`);
 
-        if(this.size > rock.size) {
+        if(this.size >= rock.breaksAt) {
             rock.destroy();
         }
         else {

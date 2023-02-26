@@ -5,33 +5,33 @@ export default class ObjectController {
     constructor(chunk) {
         this.chunk = chunk;
         this.rocksData = [
-            {id: 1, size: 1, key: 112, spawnRates: [
+            {id: 1, size: 16, key: 112, breaksAt: 2, spawnRates: [
                 {lv: 0, spawnRate: 0},
-                {lv: 1, spawnRate: 0.01},
-                {lv: 2, spawnRate: 0.02},
-                {lv: 3, spawnRate: 0.03},
-                {lv: 4, spawnRate: 0.04},
-                {lv: 5, spawnRate: 0.05},
-                {lv: 6, spawnRate: 0.04},
-                {lv: 7, spawnRate: 0.03},
-                {lv: 8, spawnRate: 0.02},
-                {lv: 9, spawnRate: 0.01},
+                {lv: 1, spawnRate: 0.005},
+                {lv: 2, spawnRate: 0.010},
+                {lv: 3, spawnRate: 0.015},
+                {lv: 4, spawnRate: 0.020},
+                {lv: 5, spawnRate: 0.025},
+                {lv: 6, spawnRate: 0.020},
+                {lv: 7, spawnRate: 0.015},
+                {lv: 8, spawnRate: 0.010},
+                {lv: 9, spawnRate: 0.005},
                 {lv: 10, spawnRate: 0},
             ]},
-            {id: 2, size: 2, key: 109, spawnRates: [
+            {id: 2, size: 24, key: 109, breaksAt: 3, spawnRates: [
                 {lv: 0, spawnRate: 0},
                 {lv: 1, spawnRate: 0},
-                {lv: 2, spawnRate: 0.01},
-                {lv: 3, spawnRate: 0.02},
-                {lv: 4, spawnRate: 0.03},
-                {lv: 5, spawnRate: 0.04},
-                {lv: 6, spawnRate: 0.05},
-                {lv: 7, spawnRate: 0.04},
-                {lv: 8, spawnRate: 0.03},
-                {lv: 9, spawnRate: 0.02},
-                {lv: 10, spawnRate: 0.01},
+                {lv: 2, spawnRate: 0.005},
+                {lv: 3, spawnRate: 0.010},
+                {lv: 4, spawnRate: 0.015},
+                {lv: 5, spawnRate: 0.020},
+                {lv: 6, spawnRate: 0.025},
+                {lv: 7, spawnRate: 0.020},
+                {lv: 8, spawnRate: 0.015},
+                {lv: 9, spawnRate: 0.010},
+                {lv: 10, spawnRate: 0.005},
             ]},
-            {id: 3, size: 3, key: 113, spawnRates: [
+            {id: 3, size: 32, key: 113, breaksAt: 4, spawnRates: [
                 {lv: 0, spawnRate: 0},
                 {lv: 1, spawnRate: 0},
                 {lv: 2, spawnRate: 0},
@@ -44,7 +44,7 @@ export default class ObjectController {
                 {lv: 9, spawnRate: 0.03},
                 {lv: 10, spawnRate: 0.02},
             ]},
-            {id: 4, size: 4, key: 108, spawnRates: [
+            {id: 4, size: 40, key: 108, breaksAt: 5, spawnRates: [
                 {lv: 0, spawnRate: 0},
                 {lv: 1, spawnRate: 0},
                 {lv: 2, spawnRate: 0},
@@ -57,7 +57,7 @@ export default class ObjectController {
                 {lv: 9, spawnRate: 0.04},
                 {lv: 10, spawnRate: 0.03},
             ]},
-            {id: 5, size: 5, key: 111, spawnRates: [
+            {id: 5, size: 48, key: 111, breaksAt: 6, spawnRates: [
                 {lv: 0, spawnRate: 0},
                 {lv: 1, spawnRate: 0},
                 {lv: 2, spawnRate: 0},
@@ -70,7 +70,7 @@ export default class ObjectController {
                 {lv: 9, spawnRate: 0.05},
                 {lv: 10, spawnRate: 0.04},
             ]},
-            {id: 6, size: 6, key: 110, spawnRates: [
+            {id: 6, size: 64, key: 110, breaksAt: 7, spawnRates: [
                 {lv: 0, spawnRate: 0},
                 {lv: 1, spawnRate: 0},
                 {lv: 2, spawnRate: 0},
@@ -138,6 +138,7 @@ export default class ObjectController {
                         chunk.scene.physics.add.existing(newRock);
                         chunk.scene.rocks.add(newRock);
                         newRock.body.depth = 20;
+                        newRock.body.size = rock.size
 
                         chunk.scene.physics.add.overlap(chunk.scene.player.boat, newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
                         const bumps = chunk.scene.player.bumps;
