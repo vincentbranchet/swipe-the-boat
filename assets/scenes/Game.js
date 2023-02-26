@@ -28,17 +28,17 @@ class Game extends Phaser.Scene {
             untilNextLvDistance: document.getElementById('untilNextLvDistance')
         };
         this.levels = [
-            {id: 0, threshold: 100, waveVelocityY: -10},
-            {id: 1, threshold: 250, waveVelocityY: -20},
-            {id: 2, threshold: 500, waveVelocityY: -30},
-            {id: 3, threshold: 1000, waveVelocityY: -50},
-            {id: 4, threshold: 2000, waveVelocityY: -75},
-            {id: 5, threshold: 5000, waveVelocityY: -100},
-            {id: 6, threshold: 7500, waveVelocityY: -150},
-            {id: 7, threshold: 10000, waveVelocityY: -200},
-            {id: 8, threshold: 15000, waveVelocityY: -250},
-            {id: 9, threshold: 25000, waveVelocityY: -400},
-            {id: 10, threshold: 50000, waveVelocityY: -600},
+            {id: 0, threshold: 1000, waveVelocityY: -10},
+            {id: 1, threshold: 2500, waveVelocityY: -20},
+            {id: 2, threshold: 5000, waveVelocityY: -30},
+            {id: 3, threshold: 10000, waveVelocityY: -50},
+            {id: 4, threshold: 20000, waveVelocityY: -75},
+            {id: 5, threshold: 50000, waveVelocityY: -100},
+            {id: 6, threshold: 75000, waveVelocityY: -150},
+            {id: 7, threshold: 100000, waveVelocityY: -200},
+            {id: 8, threshold: 150000, waveVelocityY: -250},
+            {id: 9, threshold: 250000, waveVelocityY: -400},
+            {id: 10, threshold: 500000, waveVelocityY: -600},
         ];
     }
 
