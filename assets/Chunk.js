@@ -1,5 +1,5 @@
-import Tile from "./Tile";
-import ObjectController from './ObjectController';
+import Tile from "./Tile.js";
+import ObjectController from './ObjectController.js';
 
 class Chunk {
     constructor(scene, x, y) {

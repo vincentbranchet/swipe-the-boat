@@ -1,5 +1,5 @@
-import Chunk from "../Chunk";
-import PlayerCharacter from "../PlayerCharacter";
+import Chunk from "../Chunk.js";
+import PlayerCharacter from "../PlayerCharacter.js";
 
 class Game extends Phaser.Scene {
     constructor() {
@@ -65,7 +65,7 @@ class Game extends Phaser.Scene {
 
         snappedChunkX = snappedChunkX / this.chunkSize / this.tileSize;
         snappedChunkY = snappedChunkY / this.chunkSize / this.tileSize;
-        
+
         // get current wave tiles data
         const waveTiles = this.wave.getChildren();
         const maxX = Math.max.apply(Math,waveTiles.map((o) => o.x));
@@ -81,7 +81,7 @@ class Game extends Phaser.Scene {
                     chunkPositions = chunkPositions.concat('('+x+', '+y+') ');
                     const newChunk = new Chunk(this, x, y);
                     this.chunks.push(newChunk);
-                    
+
                     if(newChunk.x * this.chunkSize * this.tileSize < minX) {
                         for(let i = minX; i > newChunk.x * this.chunkSize * this.tileSize; i -= this.tileSize) {
                             this.waveTile = this.physics.add.sprite(i, Math.round(maxXTile.y), 'water', 64).refreshBody();
@@ -167,12 +167,12 @@ class Game extends Phaser.Scene {
         // UI
         this.UI.totalDistance.innerHTML = totalPlayerDist;
         this.UI.untilNextLvDistance.innerHTML = untilNextLvDist;
-        
+
         let boatsVelocity = '', boatsDrag = '';
         boatsVelocity = boatsVelocity.concat(`(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)}),`);
         boatsDrag = boatsDrag.concat(`(${Math.round(boat.body.drag.x)}, ${Math.round(boat.body.drag.y)}),`);
 
-        this.debug.innerHTML = 
+        this.debug.innerHTML =
             `boats velocity : ${boatsVelocity}
             <br /> boats drag : ${boatsDrag}
             <br /> wave velocity Y : ${this.level.waveVelocityY}
@@ -185,8 +185,8 @@ class Game extends Phaser.Scene {
         this.chunkSize = 8;
         this.tileSize = 16;
         this.chunks = [];
-        this.physics.world.fixedStep = false; 
-        
+        this.physics.world.fixedStep = false;
+
         this.input.on('pointerdown', (e) => this.handlePress(e));
         this.input.on('pointermove', (e) => this.handleDrag(e));
         this.input.on('pointerup', (e) => this.handleRelease(e));
@@ -226,10 +226,10 @@ class Game extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 16
         });
-        this.load.spritesheet('boats', 'assets/boats.png', { 
-            frameWidth: 32, 
+        this.load.spritesheet('boats', 'assets/boats.png', {
+            frameWidth: 32,
             frameHeight: 32
-        }); 
+        });
         this.load.spritesheet('characters', 'assets/characters.png', {
             frameWidth: 32,
             frameHeight: 32
@@ -274,7 +274,7 @@ class Game extends Phaser.Scene {
             for(let i = 0; i < touches.length; i++) {
                 const idx = this.ongoingTouchIndexById(touches[i].identifier);
 
-                if(idx >= 0) {              
+                if(idx >= 0) {
                     const touch = this.customControls.touches[idx];
 
                     if(this.customControls.prevTouch) {

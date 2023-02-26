@@ -1,5 +1,5 @@
-import Debris from './Debris';
-import Rock from './Rock';
+import Debris from './Debris.js';
+import Rock from './Rock.js';
 
 export default class ObjectController {
     constructor(chunk) {
@@ -86,8 +86,8 @@ export default class ObjectController {
         ];
 
         this.debrisData = {
-            id: 1, 
-            key: 139, 
+            id: 1,
+            key: 139,
             spawnRates: [
                 {lv: 0, spawnRate: 0.001},
                 {lv: 1, spawnRate: 0.001},
@@ -106,7 +106,7 @@ export default class ObjectController {
     /**
      * For each rock time, look for data for current level, runs a spawn check for each tile on chunk, and spawns rock on random chunk tiles
      * Called once on each loaded chunk
-     * @param {*} chunk 
+     * @param {*} chunk
      */
     spawnRocks(chunk) {
         if(chunk) {
@@ -127,7 +127,7 @@ export default class ObjectController {
                     if(toSpawn > 0) {
                         console.log(`Spawning ${toSpawn} rocks of id ${rock.id}`);
                     }
-        
+
                     for(let i = 0; i < toSpawn; i++) {
                         const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
                         const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
@@ -142,7 +142,6 @@ export default class ObjectController {
                         chunk.scene.physics.add.overlap(chunk.scene.player.boat, newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
                         const bumps = chunk.scene.player.bumps;
                         for(let i = 0; i < bumps.length; i++) {
-                            console.log(bumps[i]);
                             chunk.scene.physics.add.overlap(bumps[i], newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
                         }
                     }
@@ -154,12 +153,12 @@ export default class ObjectController {
     /**
      * Looks for debris data for current level, runs a spawn check for each tile on chunk, and spawns debris on random chunk tiles
      * Called once on each loaded chunk
-     * @param {*} chunk 
+     * @param {*} chunk
      */
     spawnDebris(chunk) {
         if(chunk) {
             const lv = chunk.scene.level.id;
-            
+
             const debrisDataForLevel = this.debrisData.spawnRates.find(d => d.lv === lv);
             if(debrisDataForLevel && debrisDataForLevel.spawnRate) {
                 let toSpawn = 0;
@@ -174,8 +173,8 @@ export default class ObjectController {
 
                 if(toSpawn > 0) {
                     console.log(`Spawning ${toSpawn} debris of id ${this.debrisData.id}`);
-                } 
-    
+                }
+
                 for(let i = 0; i < toSpawn; i++) {
                     const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
                     const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
@@ -188,7 +187,7 @@ export default class ObjectController {
                     chunk.scene.physics.add.overlap(chunk.scene.player.boat, newDebris, chunk.scene.player.handleTouchedDebris, null, chunk.scene.player);
                 }
             }
-            
+
         }
     }
 }

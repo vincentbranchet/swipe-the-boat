@@ -14,9 +14,9 @@
         #game-over {
             position: absolute;
             transform: translateY(-50%);
-            display: none; 
-            flex-direction: column; 
-            justify-content: center; 
+            display: none;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
             background-color: #4fa4b8;
             color: white;
@@ -30,9 +30,9 @@
         }
         #game {
             padding-top: 1rem;
-            width:'100%'; 
-            display: flex; 
-            justify-content: center; 
+            width:'100%';
+            display: flex;
+            justify-content: center;
             align-items: flex-start;
         }
         .ui-container {
@@ -68,7 +68,7 @@
                 <div class="ui-data">
                     <img src="./assets/level-up.png" alt="Next LV in">
                 </div>
-                <div  class="ui-data" id="untilNextLvDistance"></div>    
+                <div  class="ui-data" id="untilNextLvDistance"></div>
             </div>
             <div class="ui-line">
                 <div class="ui-data">
@@ -82,9 +82,9 @@
 
     <script type="text/javascript" src="./dist/phaser.js"></script>
     <script type="module">
-        import Game from "./assets/scenes/Game";
-        import Start from "./assets/scenes/Start";
-        import GameOver from "./assets/scenes/GameOver";
+        import Game from "./assets/scenes/Game.js";
+        import Start from "./assets/scenes/Start.js";
+        import GameOver from "./assets/scenes/GameOver.js";
         const globalWidth = (window.innerWidth - 20) < 500 ? window.innerWidth - 20 : 500;
         const globalHeight = (window.innerHeight - 20) < 700 ? window.innerHeight - 20 : 700;
 

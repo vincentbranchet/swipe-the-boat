@@ -1,5 +1,5 @@
-import PlayerBoat from "./PlayerBoat";
-import PlayerBump from './PlayerBump';
+import PlayerBoat from "./PlayerBoat.js";
+import PlayerBump from './PlayerBump.js';
 
 export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y) {
@@ -18,7 +18,7 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
 
     init() {
         this.boat = new PlayerBoat(this.scene, 0, -100);
-        
+
         this.boat.body.setSize(this.debutWidth, this.debutHeight);
         this.boat.body.drag.x = 50;
         this.boat.body.drag.y = 50;
@@ -34,10 +34,10 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
      */
     handleTouchedDebris(boat, debris) {
         console.log('Player has touched a debris.');
-        
+
         if(debris.active) {
             const boat = this.boat;
-            
+
             this.size = this.size + 1;
 
             const newBumpYOffset = this.bumps.length * 8 + 32;
@@ -52,7 +52,7 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
     /**
      * Collision callback between player and rock
      * @param {Phaser.GameObjects.Sprite} boat
-     * @param {Phaser.GameObjects.Sprite} rock 
+     * @param {Phaser.GameObjects.Sprite} rock
      */
     /**
      * TODO : play animation
@@ -67,6 +67,6 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
             this.scene.scene.stop();
             this.scene.scene.start('GameOver');
         }
-        
+
     }
 }
