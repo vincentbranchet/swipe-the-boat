@@ -157,8 +157,8 @@ class Game extends Phaser.Scene {
         this.player.body.y = boat.y - 32;
         for(let i = 0; i < this.player.bumps.length; i++) {
             const bump = this.player.bumps[i];
-            bump.body.x = boat.x - 8;
-            bump.body.y = boat.y - (i * 8 + 32);
+            bump.body.x = boat.x - (i * 8 + 12) + (8 * this.player.bumps.length / 2);
+            bump.body.y = boat.y - 32;
         }
 
         // camera

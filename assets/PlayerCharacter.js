@@ -40,8 +40,16 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
 
             this.size = this.size + 1;
 
-            const newBumpYOffset = this.bumps.length * 8 + 32;
-            const newBump = new PlayerBump(this.scene, boat.body.x - 8, boat.body.y - newBumpYOffset);
+            const newBumpYOffset = 32;
+            const newBumpXOffset = (this.bumps.length * 8 + 12) + (this.bumps.length / 2 * 8);
+            const bumpWidth = this.bumps.length === 0 ? 16 : 8;
+            const bumpHeight = 16;
+
+            const newBump = new PlayerBump(this.scene, boat.body.x - newBumpXOffset, boat.body.y - newBumpYOffset);
+
+            newBump.body.size = bumpWidth;
+            newBump.displayWidth = bumpWidth;
+            newBump.displayHeight = bumpHeight;
 
             this.bumps.push(newBump);
 
