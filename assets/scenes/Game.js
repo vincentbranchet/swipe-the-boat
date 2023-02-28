@@ -167,13 +167,10 @@ class Game extends Phaser.Scene {
         this.UI.totalDistance.innerHTML = totalPlayerDist;
         this.UI.untilNextLvDistance.innerHTML = untilNextLvDist;
 
-        let boatsVelocity = '', boatsDrag = '';
-        boatsVelocity = boatsVelocity.concat(`(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)}),`);
-        boatsDrag = boatsDrag.concat(`(${Math.round(boat.body.drag.x)}, ${Math.round(boat.body.drag.y)}),`);
+        const boatVelocity = `(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)})`;
 
         this.debug.innerHTML =
-            `boats velocity : ${boatsVelocity}
-            <br /> boats drag : ${boatsDrag}
+            `boat velocity : ${boatVelocity}
             <br /> wave velocity Y : ${this.level.waveVelocityY}
             <br /> max speed : ${this.player.maxSpeed}
             <br /> level : ${this.level.id}`;
@@ -207,7 +204,6 @@ class Game extends Phaser.Scene {
             this.waveTile = new WaveTile(this, i * this.tileSize, this.waveStartY);
             this.waveTile.body.setVelocityY(this.level.waveVelocityY);
             this.wave.add(this.waveTile);
-            console.log(this.wave);
         }
 
         // collisions
