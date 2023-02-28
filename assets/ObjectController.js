@@ -183,6 +183,7 @@ export default class ObjectController {
                     const newLoot = new Loot(chunk.scene, x, y, this.lootData.key);
                     chunk.scene.add.existing(newLoot);
                     chunk.scene.physics.add.existing(newLoot);
+                    chunk.scene.loots.add(newLoot);
                     newLoot.body.depth = 20;
 
                     chunk.scene.physics.add.overlap(chunk.scene.player.boat, newLoot, chunk.scene.player.handleTouchedLoot, null, chunk.scene.player);

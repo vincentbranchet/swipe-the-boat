@@ -16,6 +16,7 @@ class Game extends Phaser.Scene {
             speed: 1,
         }
         this.rocks = null;
+        this.loots = null;
         this.wave = null;
         this.waveStartY = 0;
         this.waveVelocityY = -10;
@@ -169,13 +170,24 @@ class Game extends Phaser.Scene {
         this.UI.untilNextLvDistance.innerHTML = untilNextLvDist;
         this.UI.playerLoot.innerHTML = this.player.loot;
 
+        // debug
         const boatVelocity = `(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)})`;
+        let closestLoot = {x: 0, y: 0, d: 0};
+        const loots = this.loots.getChildren();
+        loots.forEach(l => {
+            const d = Math.round(Phaser.Math.Distance.Between(l.body.x, l.body.y, this.player.body.x, this.player.body.y));
+            if((closestLoot.x === 0 && closestLoot.y === 0) || d < closestLoot.d) {
+                closestLoot = {x: Math.round(l.body.x), y: Math.round(l.body.y), d: d};
+            }
+        });
 
         this.debug.innerHTML =
             `boat velocity : ${boatVelocity}
             <br /> wave velocity Y : ${this.level.waveVelocityY}
             <br /> max speed : ${this.player.maxSpeed}
-            <br /> level : ${this.level.id}`;
+            <br /> level : ${this.level.id}
+            <br /> player position : (${Math.round(this.player.body.x)}, ${Math.round(this.player.body.y)})
+            <br /> closest loot : (${closestLoot.x}, ${closestLoot.y}) (${closestLoot.d})`;
     }
 
     create() {
@@ -198,7 +210,10 @@ class Game extends Phaser.Scene {
         this.player.init();
 
         // rocks
-        this.rocks = this.add.group()
+        this.rocks = this.add.group();
+
+        // loots
+        this.loots = this.add.group();
 
         // tsunami
         this.wave = this.add.group();
