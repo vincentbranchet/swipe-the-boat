@@ -26,7 +26,8 @@ class Game extends Phaser.Scene {
         this.debug = document.getElementById('debug');
         this.UI = {
             totalDistance: document.getElementById('totalDistance'),
-            untilNextLvDistance: document.getElementById('untilNextLvDistance')
+            untilNextLvDistance: document.getElementById('untilNextLvDistance'),
+            playerLoot: document.getElementById('playerLoot')
         };
         this.levels = [
             {id: 0, threshold: 1000, waveVelocityY: -10},
@@ -166,6 +167,7 @@ class Game extends Phaser.Scene {
         // UI
         this.UI.totalDistance.innerHTML = totalPlayerDist;
         this.UI.untilNextLvDistance.innerHTML = untilNextLvDist;
+        this.UI.playerLoot.innerHTML = this.player.loot;
 
         const boatVelocity = `(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)})`;
 

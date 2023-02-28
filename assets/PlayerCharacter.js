@@ -9,7 +9,7 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
         this.maxSpeed = 100;
         this.debutWidth = 10;
         this.debutHeight = 20;
-        this.size = 1;
+        this.loot = 0;
         this.depth = 10;
 
         scene.physics.world.enableBody(this);
@@ -38,8 +38,6 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
         if(loot.active) {
             const boat = this.boat;
 
-            this.size = this.size + 1;
-
             const newShieldYOffset = 34;
             const newShieldXOffset = (this.shield.length * 8 + 12) + (this.shield.length / 2 * 8);
             const shieldWidth = this.shield.length === 0 ? 16 : 8;
@@ -52,6 +50,8 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
             newShield.displayHeight = shieldHeight;
 
             this.shield.push(newShield);
+
+            this.loot += 1;
 
             loot.destroy();
         }
@@ -66,9 +66,9 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
      * TODO : play animation
      */
     handleTouchedRock(boat, rock) {
-        console.log(`Player has touched a rock at ${rock.x}, ${rock.y}. (P Size : ${this.size}, R breaks at : ${rock.breaksAt})`);
+        console.log(`Player has touched a rock at ${rock.x}, ${rock.y}. (P Size : ${this.shield.length}, R breaks at : ${rock.breaksAt})`);
 
-        if(this.size >= rock.breaksAt) {
+        if(this.shield.length >= rock.breaksAt) {
             rock.destroy();
         }
         else {
