@@ -164,6 +164,11 @@ class Game extends Phaser.Scene {
 
         // camera
         this.cameras.main.centerOn(boat.x, boat.y - 100);
+        const playerToWaveDist = Math.round(Math.abs(this.player.body.y) - Math.abs(this.wave.getChildren()[0].body.y));
+        if(playerToWaveDist < 800) {
+            const intensity = Math.round((1 - ((playerToWaveDist - 200) > 0 ? (playerToWaveDist - 200) :  0) / (800 - 200)) * 100) / 100;
+            this.cameras.main.shake(50, intensity * 0.001);
+        }
 
         // UI
         this.UI.totalDistance.innerHTML = totalPlayerDist;
@@ -187,7 +192,8 @@ class Game extends Phaser.Scene {
             <br /> max speed : ${this.player.maxSpeed}
             <br /> level : ${this.level.id}
             <br /> player position : (${Math.round(this.player.body.x)}, ${Math.round(this.player.body.y)})
-            <br /> closest loot : (${closestLoot.x}, ${closestLoot.y}) (${closestLoot.d})`;
+            <br /> closest loot : (${closestLoot.x}, ${closestLoot.y}) (${closestLoot.d})
+            <br /> distance to wave : ${playerToWaveDist}`;
     }
 
     create() {
