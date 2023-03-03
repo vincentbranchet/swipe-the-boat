@@ -26,8 +26,6 @@ class Game extends Phaser.Scene {
         this.playerStartY = -100;
         this.debug = document.getElementById('debug');
         this.UI = {
-            totalDistance: document.getElementById('totalDistance'),
-            untilNextLvDistance: document.getElementById('untilNextLvDistance'),
             playerLoot: document.getElementById('playerLoot'),
             closestLootIndicator: null,
         };
@@ -184,8 +182,6 @@ class Game extends Phaser.Scene {
             });
         }
 
-        this.UI.totalDistance.innerHTML = totalPlayerDist;
-        this.UI.untilNextLvDistance.innerHTML = untilNextLvDist;
         this.UI.playerLoot.innerHTML = this.player.loot;
         this.UI.closestLootIndicator.depth = -1;
 
@@ -222,8 +218,6 @@ class Game extends Phaser.Scene {
             <br /> max speed : ${this.player.maxSpeed}
             <br /> player position : (${Math.round(this.player.body.x)}, ${Math.round(this.player.body.y)})
             <br /> closest loot : (${closestLoot.x}, ${closestLoot.y}) (${closestLoot.d})
-            <br /> closest loot is offscreen X : ${closestLootIsOffscreenX}
-            <br /> closest loot is offscreen Y : ${closestLootIsOffscreenY}
             `;
     }
 
