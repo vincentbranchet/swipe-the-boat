@@ -28,7 +28,8 @@ class Game extends Phaser.Scene {
         this.UI = {
             totalDistance: document.getElementById('totalDistance'),
             untilNextLvDistance: document.getElementById('untilNextLvDistance'),
-            playerLoot: document.getElementById('playerLoot')
+            playerLoot: document.getElementById('playerLoot'),
+            closestLootIndicator: null,
         };
         this.levels = [
             {id: 0, threshold: 1000, waveVelocityY: -10},
@@ -171,29 +172,59 @@ class Game extends Phaser.Scene {
         }
 
         // UI
+        let closestLoot = {exists: false, x: 0, y: 0, d: 0, indicatorTopPosition: 0, indicatorLeftPosition: 0};
+        const loots = this.loots.getChildren();
+        if(loots.length > 0) {
+            loots.forEach(l => {
+                const d = Math.round(Phaser.Math.Distance.Between(l.body.x, l.body.y, this.player.body.x, this.player.body.y));
+                if((closestLoot.x === 0 && closestLoot.y === 0) || d < closestLoot.d) {
+                    closestLoot = {x: Math.round(l.body.x), y: Math.round(l.body.y), d: d};
+                    closestLoot.exists = true;
+                }
+            });
+        }
+
         this.UI.totalDistance.innerHTML = totalPlayerDist;
         this.UI.untilNextLvDistance.innerHTML = untilNextLvDist;
         this.UI.playerLoot.innerHTML = this.player.loot;
+        this.UI.closestLootIndicator.depth = -1;
+
+        const offset = 10;
+        const closestLootIsOffscreenX = closestLoot.x < this.cameras.main.worldView.left + offset ||
+            closestLoot.x > this.cameras.main.worldView.right - offset;
+        const closestLootIsOffscreenY = closestLoot.y < this.cameras.main.worldView.top + offset ||
+            closestLoot.y > this.cameras.main.worldView.bottom - offset;
+
+        if(closestLoot.exists && (closestLootIsOffscreenX || closestLootIsOffscreenY)) {
+            /**
+             * Offscreen closest loot UI is placed thanks to the slope y-intercept formula and someone from Unity forums
+             * source : https://answers.unity.com/questions/1607125/off-camera-view-object-tracker.html
+             */
+            this.UI.closestLootIndicator.depth = 100;
+            const slope = (closestLoot.y - this.player.body.y) / (closestLoot.x - this.player.body.x);
+            const intercept = this.player.body.y + (-slope * this.player.body.x);
+            this.UI.closestLootIndicator.x = this.clamp(closestLoot.x, this.cameras.main.worldView.left + offset, this.cameras.main.worldView.right - offset);
+            this.UI.closestLootIndicator.y = (slope * this.UI.closestLootIndicator.x) + intercept;
+
+            if(this.UI.closestLootIndicator.y > this.cameras.main.worldView.bottom - offset || this.UI.closestLootIndicator.y < this.cameras.main.worldView.top + offset) {
+                this.UI.closestLootIndicator.y = this.clamp(closestLoot.y, this.cameras.main.worldView.top + offset, this.cameras.main.worldView.bottom - offset);
+                this.UI.closestLootIndicator.x = (this.UI.closestLootIndicator.y - intercept) / slope;
+            }
+        }
 
         // debug
         const boatVelocity = `(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)})`;
-        let closestLoot = {x: 0, y: 0, d: 0};
-        const loots = this.loots.getChildren();
-        loots.forEach(l => {
-            const d = Math.round(Phaser.Math.Distance.Between(l.body.x, l.body.y, this.player.body.x, this.player.body.y));
-            if((closestLoot.x === 0 && closestLoot.y === 0) || d < closestLoot.d) {
-                closestLoot = {x: Math.round(l.body.x), y: Math.round(l.body.y), d: d};
-            }
-        });
+
 
         this.debug.innerHTML =
             `boat velocity : ${boatVelocity}
             <br /> wave velocity Y : ${this.level.waveVelocityY}
             <br /> max speed : ${this.player.maxSpeed}
-            <br /> level : ${this.level.id}
             <br /> player position : (${Math.round(this.player.body.x)}, ${Math.round(this.player.body.y)})
             <br /> closest loot : (${closestLoot.x}, ${closestLoot.y}) (${closestLoot.d})
-            <br /> distance to wave : ${playerToWaveDist}`;
+            <br /> closest loot is offscreen X : ${closestLootIsOffscreenX}
+            <br /> closest loot is offscreen Y : ${closestLootIsOffscreenY}
+            `;
     }
 
     create() {
@@ -237,6 +268,10 @@ class Game extends Phaser.Scene {
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+        // UI
+        this.UI.closestLootIndicator = this.add.rectangle(-100, -300, 10, 10, 0x6666ff);
+        this.UI.closestLootIndicator.depth = -1;
     }
 
     preload() {
@@ -374,6 +409,10 @@ class Game extends Phaser.Scene {
             }
         }
         return -1;
+    }
+
+    clamp(num, min, max) {
+         return Math.min(Math.max(num, min), max);
     }
 }
 
