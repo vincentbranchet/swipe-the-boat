@@ -155,11 +155,7 @@ class Game extends Phaser.Scene {
         // player objects position
         this.player.body.x = boat.x - 16;
         this.player.body.y = boat.y - 32;
-        for(let i = 0; i < this.player.shield.length; i++) {
-            const shield = this.player.shield[i];
-            shield.body.x = boat.x - (i * 8 + 12) + (8 * this.player.shield.length / 2);
-            shield.body.y = boat.y - 34;
-        }
+        this.player.updateShield();
 
         // camera
         this.cameras.main.centerOn(boat.x, boat.y - 100);
@@ -170,6 +166,9 @@ class Game extends Phaser.Scene {
         }
 
         // UI
+        this.UI.playerLoot.innerHTML = this.player.loot;
+        this.UI.closestLootIndicator.depth = -1;
+
         let closestLoot = {exists: false, x: 0, y: 0, d: 0, indicatorTopPosition: 0, indicatorLeftPosition: 0};
         const loots = this.loots.getChildren();
         if(loots.length > 0) {
@@ -181,9 +180,6 @@ class Game extends Phaser.Scene {
                 }
             });
         }
-
-        this.UI.playerLoot.innerHTML = this.player.loot;
-        this.UI.closestLootIndicator.depth = -1;
 
         const offset = 10;
         const closestLootIsOffscreenX = closestLoot.x < this.cameras.main.worldView.left + offset ||
@@ -209,13 +205,10 @@ class Game extends Phaser.Scene {
         }
 
         // debug
-        const boatVelocity = `(${Math.round(boat.body.velocity.x)}, ${Math.round(boat.body.velocity.y)})`;
-
-
         this.debug.innerHTML =
-            `boat velocity : ${boatVelocity}
+            `boat speed : ${Math.round(this.player.boat.body.speed)}
             <br /> wave velocity Y : ${this.level.waveVelocityY}
-            <br /> max speed : ${this.player.maxSpeed}
+            <br /> max speed : ${this.player.boat.body.maxSpeed}
             <br /> player position : (${Math.round(this.player.body.x)}, ${Math.round(this.player.body.y)})
             <br /> closest loot : (${closestLoot.x}, ${closestLoot.y}) (${closestLoot.d})
             `;

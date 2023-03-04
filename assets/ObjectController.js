@@ -89,17 +89,17 @@ export default class ObjectController {
             id: 1,
             key: 153,
             spawnRates: [
-                {lv: 0, spawnRate: 0.0001},
-                {lv: 1, spawnRate: 0.0001},
-                {lv: 2, spawnRate: 0.0002},
-                {lv: 3, spawnRate: 0.0002},
-                {lv: 4, spawnRate: 0.0003},
-                {lv: 5, spawnRate: 0.0003},
-                {lv: 6, spawnRate: 0.0003},
-                {lv: 7, spawnRate: 0.0004},
-                {lv: 8, spawnRate: 0.0004},
-                {lv: 9, spawnRate: 0.0004},
-                {lv: 10, spawnRate: 0.0004},
+                {lv: 0, spawnRate: 0.0005},
+                {lv: 1, spawnRate: 0.0005},
+                {lv: 2, spawnRate: 0.0005},
+                {lv: 3, spawnRate: 0.0005},
+                {lv: 4, spawnRate: 0.0005},
+                {lv: 5, spawnRate: 0.0005},
+                {lv: 6, spawnRate: 0.0005},
+                {lv: 7, spawnRate: 0.0005},
+                {lv: 8, spawnRate: 0.0005},
+                {lv: 9, spawnRate: 0.0005},
+                {lv: 10, spawnRate: 0.0005},
             ]};
     }
 
@@ -180,7 +180,7 @@ export default class ObjectController {
                     const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
                     const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
 
-                    const newLoot = new Loot(chunk.scene, x, y, this.lootData.key);
+                    const newLoot = new Loot(chunk.scene, x, y, this.lootData.key, 10);
                     chunk.scene.add.existing(newLoot);
                     chunk.scene.physics.add.existing(newLoot);
                     chunk.scene.loots.add(newLoot);
