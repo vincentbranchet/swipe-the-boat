@@ -158,7 +158,7 @@ class Game extends Phaser.Scene {
         this.player.updateShield();
 
         // camera
-        this.cameras.main.centerOn(boat.x, boat.y - 100);
+        this.cameras.main.centerOn(boat.x, boat.y - 40);
         const playerToWaveDist = Math.round(Math.abs(this.player.body.y) - Math.abs(this.wave.getChildren()[0].body.y));
         if(playerToWaveDist < 800) {
             const intensity = Math.round((1 - ((playerToWaveDist - 200) > 0 ? (playerToWaveDist - 200) :  0) / (800 - 200)) * 100) / 100;
