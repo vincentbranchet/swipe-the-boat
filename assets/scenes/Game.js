@@ -18,9 +18,8 @@ class Game extends Phaser.Scene {
         this.rocks = null;
         this.loots = null;
         this.wave = null;
-        this.waveStartY = 0;
-        this.waveVelocityY = -10;
-        this.level = {id: 0, threshold: 100, waveVelocityY: -10};
+        this.waveStartY = 120;
+        this.level = null;
         this.totalDistance = null;
         this.playerStartX = 0;
         this.playerStartY = -100;
@@ -30,9 +29,9 @@ class Game extends Phaser.Scene {
             closestLootIndicator: null,
         };
         this.levels = [
-            {id: 0, threshold: 1000, waveVelocityY: -10},
-            {id: 1, threshold: 2500, waveVelocityY: -20},
-            {id: 2, threshold: 5000, waveVelocityY: -30},
+            {id: 0, threshold: 1000, waveVelocityY: -25},
+            {id: 1, threshold: 2500, waveVelocityY: -30},
+            {id: 2, threshold: 5000, waveVelocityY: -40},
             {id: 3, threshold: 10000, waveVelocityY: -50},
             {id: 4, threshold: 20000, waveVelocityY: -75},
             {id: 5, threshold: 50000, waveVelocityY: -100},
@@ -46,20 +45,32 @@ class Game extends Phaser.Scene {
 
     init() {
         this.smoothZoom(this.input);
+        this.level = this.levels[0];
+        this.totalDistance = null;
     }
 
     smoothZoom(inputs) {
         let zoom = setTimeout(() => {
             this.cameras.main.zoomTo(2.5);
-        }, 2000);
+        }, 4000);
     }
 
-    handleWaveTouched() {
-        this.scene.stop();
-        this.scene.start('GameOver');
+    handleWaveTouched(player, waveTile) {
+        console.log(`Player has touched the wave.`)
+        if(waveTile.active) {
+            console.log(`Wave tile in (${waveTile.body.x + ', ' + waveTile.body.y}). 
+            Created at : ${waveTile.metaData.created.at}
+            Updated at : ${waveTile.metaData.updated.at} by ${waveTile.metaData.updated.by}
+            Oirigin X : ${waveTile.metaData.created.coords.x}
+            Oirigin Y : ${waveTile.metaData.created.coords.y}
+            `);
+            this.scene.stop();
+            this.scene.start('GameOver');
+        }
     }
 
     update() {
+        console.log(this.wave.getLength())
         const boat = this.player.boat;
         // retrieve position of chunk where follow point is
         let snappedChunkX = (this.chunkSize * this.tileSize) * Math.round(boat.x / (this.chunkSize * this.tileSize));
@@ -70,9 +81,9 @@ class Game extends Phaser.Scene {
 
         // get current wave tiles data
         const waveTiles = this.wave.getChildren();
-        const maxX = Math.max.apply(Math,waveTiles.map((o) => o.x));
-        const maxXTile = waveTiles.find((o) => o.x == maxX);
-        const minX = Math.min.apply(Math,waveTiles.map((o) => o.x));
+        const maxX = waveTiles.length > 0 ? Math.max.apply(Math,waveTiles.map((o) => o.x)) : 0;
+        const maxXTile = waveTiles.length > 0 ? waveTiles.find((o) => o.x == maxX) : null;
+        const minX = waveTiles.length > 0 ? Math.min.apply(Math,waveTiles.map((o) => o.x)) : 0;
 
         // create chunks around position if they don't exist
         let chunkPositions = '';
@@ -86,22 +97,24 @@ class Game extends Phaser.Scene {
 
                     if(newChunk.x * this.chunkSize * this.tileSize < minX) {
                         for(let i = minX; i > newChunk.x * this.chunkSize * this.tileSize; i -= this.tileSize) {
-                            this.waveTile = new WaveTile(this, i, Math.round(maxXTile.y));
-                            this.waveTile.body.setVelocityY(this.waveVelocityY);
-                            this.wave.add(this.waveTile);
+                            let waveTile = new WaveTile(this, i, maxXTile ? Math.round(maxXTile.y) : this.waveStartY);
+                             waveTile.body.setVelocityY(this.waveVelocityY);
+                            this.wave.add(waveTile);
+                            console.log({x: waveTile.body.x, y: waveTile.body.y, at: waveTile.metaData.created.at})
                         }
                     }
                     if(newChunk.x * this.chunkSize * this.tileSize > maxX) {
                         for(let i = maxX; i < newChunk.x * this.chunkSize * this.tileSize; i += this.tileSize) {
-                            this.waveTile = new WaveTile(this, i, Math.round(maxXTile.y));
-                            this.waveTile.body.setVelocityY(this.waveVelocityY);
-                            this.wave.add(this.waveTile);
+                            let waveTile = new WaveTile(this, i, maxXTile ? Math.round(maxXTile.y) : this.waveStartY);
+                             waveTile.body.setVelocityY(this.waveVelocityY);
+                            this.wave.add(waveTile);
+                            console.log({x: waveTile.body.x, y: waveTile.body.y, at: waveTile.metaData.created.at})
                         }
                     }
                 }
             }
         }
-        chunkPositions != '' ? console.log(`Created chunks in ${chunkPositions}`) : null;
+        chunkPositions != '' ? console.log(`Created chunks around (${snappedChunkX}, ${snappedChunkY}) in ${chunkPositions}`) : null;
 
         // load existings chunks close to position & unload existing chunks far from position
         for(let i = 0; i < this.chunks.length; i++) {
@@ -124,7 +137,6 @@ class Game extends Phaser.Scene {
         // level
         const totalPlayerDist = Math.round(Math.abs(this.player.body.y) - Math.abs(this.playerStartY)) - 32;
         const nextLv = this.levels.find(lv => lv.threshold > totalPlayerDist);
-        const untilNextLvDist = nextLv.threshold - totalPlayerDist;
 
         if(totalPlayerDist > this.level.threshold) {
             this.level = nextLv;
@@ -134,6 +146,7 @@ class Game extends Phaser.Scene {
             const waveTiles = this.wave.getChildren();
             waveTiles.forEach((tile) => {
                 tile.body.velocity.y = this.level.waveVelocityY;
+                tile.metaData.updated = {at: new Date().toTimeString(), by: 'Level Controller', coords: {x: tile.body.x, y: tile.body.y}};
             });
         }
 
@@ -241,11 +254,6 @@ class Game extends Phaser.Scene {
 
         // tsunami
         this.wave = this.add.group();
-        for(let i = -16; i < 16; i++) {
-            this.waveTile = new WaveTile(this, i * this.tileSize, this.waveStartY);
-            this.waveTile.body.setVelocityY(this.level.waveVelocityY);
-            this.wave.add(this.waveTile);
-        }
 
         // collisions
         this.physics.add.overlap(this.player.boat, this.wave, this.handleWaveTouched, null, this);

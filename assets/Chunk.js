@@ -4,7 +4,6 @@ import ObjectController from './ObjectController.js';
 class Chunk {
     constructor(scene, x, y) {
         this.scene = scene;
-        this.objectController = new ObjectController(this);
         this.x = x;
         this.y = y;
         this.tiles = this.scene.add.group();
@@ -29,8 +28,8 @@ class Chunk {
                     this.tiles.add(tile);
                 }
             }
-            this.objectController.spawnRocks(this);
-            this.objectController.spawnLoot(this);
+            ObjectController.spawnRocks(this);
+            ObjectController.spawnLoot(this);
             this.isLoaded = true;
         }
     }

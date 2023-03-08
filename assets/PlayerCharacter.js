@@ -23,7 +23,7 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
         this.boat.body.setSize(this.debutWidth, this.debutHeight);
         this.boat.body.drag.x = 50;
         this.boat.body.drag.y = 50;
-        this.boat.body.maxSpeed = 100;
+        this.boat.body.maxSpeed = 150;
 
         console.log(`Boat was created with body size (${this.boat.body.width}, ${this.boat.body.height}).`);
     }
@@ -55,6 +55,8 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
             for(let i = 0; i < this.shield.length; i++) {
                 this.shield[i].body.x = this.boat.x - ShieldController.getXOffset(i) + (this.shield.length / 2 * ShieldController.width);
                 this.shield[i].body.y = this.boat.y - ShieldController.getYOffset();
+
+                this.scene.physics.add.overlap(this.shield[i], this.scene.rocks, this.scene.player.handleTouchedRock, null, this.scene.player);
             }
         }
     }
