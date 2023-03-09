@@ -58,7 +58,7 @@ class Game extends Phaser.Scene {
     handleWaveTouched(player, waveTile) {
         console.log(`Player has touched the wave.`)
         if(waveTile.active) {
-            console.log(`Wave tile in (${waveTile.body.x + ', ' + waveTile.body.y}). 
+            console.log(`Wave tile in (${waveTile.body.x + ', ' + waveTile.body.y}).
             Created at : ${waveTile.metaData.created.at}
             Updated at : ${waveTile.metaData.updated.at} by ${waveTile.metaData.updated.by}
             Oirigin X : ${waveTile.metaData.created.coords.x}
@@ -79,11 +79,7 @@ class Game extends Phaser.Scene {
         snappedChunkX = snappedChunkX / this.chunkSize / this.tileSize;
         snappedChunkY = snappedChunkY / this.chunkSize / this.tileSize;
 
-        // get current wave tiles data
-        const waveTiles = this.wave.getChildren();
-        const maxX = waveTiles.length > 0 ? Math.max.apply(Math,waveTiles.map((o) => o.x)) : 0;
-        const maxXTile = waveTiles.length > 0 ? waveTiles.find((o) => o.x == maxX) : null;
-        const minX = waveTiles.length > 0 ? Math.min.apply(Math,waveTiles.map((o) => o.x)) : 0;
+        const waveY = this.wave.getChildren().length > 0 ? this.wave.getChildren()[0].body.y : this.waveStartY;
 
         // create chunks around position if they don't exist
         let chunkPositions = '';
@@ -91,25 +87,22 @@ class Game extends Phaser.Scene {
             for(let y = snappedChunkY - 4; y < snappedChunkY + 2; y++) {
                 const existingChunk = this.getChunk(x, y);
                 if(existingChunk == null) {
+                    let waveMinMaxX = this.getWaveMinMaxX(x);
                     chunkPositions = chunkPositions.concat('('+x+', '+y+') ');
                     const newChunk = new Chunk(this, x, y);
                     this.chunks.push(newChunk);
 
-                    if(newChunk.x * this.chunkSize * this.tileSize < minX) {
-                        for(let i = minX; i > newChunk.x * this.chunkSize * this.tileSize; i -= this.tileSize) {
-                            let waveTile = new WaveTile(this, i, maxXTile ? Math.round(maxXTile.y) : this.waveStartY);
-                             waveTile.body.setVelocityY(this.waveVelocityY);
-                            this.wave.add(waveTile);
-                            console.log({x: waveTile.body.x, y: waveTile.body.y, at: waveTile.metaData.created.at})
-                        }
+                    // if new chunk creates new horizontal space to the left, add as much wave to the left as chunk width
+                    if(newChunk.minX < waveMinMaxX.minX) {
+                        console.log(newChunk.minX + ' inferior to min : ' + waveMinMaxX.minX)
+                        const waveTiles = newChunk.createWaveTiles();
+                        this.wave.addMultiple(waveTiles, true);
                     }
-                    if(newChunk.x * this.chunkSize * this.tileSize > maxX) {
-                        for(let i = maxX; i < newChunk.x * this.chunkSize * this.tileSize; i += this.tileSize) {
-                            let waveTile = new WaveTile(this, i, maxXTile ? Math.round(maxXTile.y) : this.waveStartY);
-                             waveTile.body.setVelocityY(this.waveVelocityY);
-                            this.wave.add(waveTile);
-                            console.log({x: waveTile.body.x, y: waveTile.body.y, at: waveTile.metaData.created.at})
-                        }
+                    // if new chunk creates new horizontal space to the right, add as much wave to the right as chunk width
+                    if(newChunk.minX > waveMinMaxX.maxX) {
+                        console.log(newChunk.minX + ' superior to max : ' + waveMinMaxX.minX)
+                        const waveTiles = newChunk.createWaveTiles();
+                        this.wave.addMultiple(waveTiles, true);
                     }
                 }
             }
@@ -408,6 +401,13 @@ class Game extends Phaser.Scene {
 
     clamp(num, min, max) {
          return Math.min(Math.max(num, min), max);
+    }
+
+    getWaveMinMaxX(chunkX) {
+        const waveTiles = this.wave.getChildren();
+        const maxX = waveTiles.length > 0 ? Math.max.apply(Math,waveTiles.map((o) => o.body.x)) + (this.tileSize * chunkX) : 0;
+        const minX = waveTiles.length > 0 ? Math.min.apply(Math,waveTiles.map((o) => o.body.x)) : 0;
+        return {minX: minX, maxX: maxX};
     }
 }
 
