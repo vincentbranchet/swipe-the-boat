@@ -8,12 +8,10 @@ export default class WaveTile extends Phaser.GameObjects.Sprite {
             created: {
                 at: new Date().toTimeString(),
                 by: 'Game',
-                coords: {x: x, y: y}
             },
             updated: {
                 at: null,
                 by: null,
-                coords: {x: null, y: null}
             },
             createdAtX: x,
             createdAtY: y

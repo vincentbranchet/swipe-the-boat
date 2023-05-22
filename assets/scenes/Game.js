@@ -1,6 +1,5 @@
 import Chunk from "../Chunk.js";
 import PlayerCharacter from "../PlayerCharacter.js";
-import WaveTile from "../WaveTile.js";
 
 class Game extends Phaser.Scene {
     constructor() {
@@ -17,8 +16,6 @@ class Game extends Phaser.Scene {
         }
         this.rocks = null;
         this.loots = null;
-        this.wave = null;
-        this.waveStartY = 120;
         this.level = null;
         this.totalDistance = null;
         this.playerStartX = 0;
@@ -55,22 +52,7 @@ class Game extends Phaser.Scene {
         }, 4000);
     }
 
-    handleWaveTouched(player, waveTile) {
-        console.log(`Player has touched the wave.`)
-        if(waveTile.active) {
-            console.log(`Wave tile in (${waveTile.body.x + ', ' + waveTile.body.y}). 
-            Created at : ${waveTile.metaData.created.at}
-            Updated at : ${waveTile.metaData.updated.at} by ${waveTile.metaData.updated.by}
-            Oirigin X : ${waveTile.metaData.created.coords.x}
-            Oirigin Y : ${waveTile.metaData.created.coords.y}
-            `);
-            this.scene.stop();
-            this.scene.start('GameOver');
-        }
-    }
-
     update() {
-        console.log(this.wave.getLength())
         const boat = this.player.boat;
         // retrieve position of chunk where follow point is
         let snappedChunkX = (this.chunkSize * this.tileSize) * Math.round(boat.x / (this.chunkSize * this.tileSize));
@@ -78,12 +60,6 @@ class Game extends Phaser.Scene {
 
         snappedChunkX = snappedChunkX / this.chunkSize / this.tileSize;
         snappedChunkY = snappedChunkY / this.chunkSize / this.tileSize;
-
-        // get current wave tiles data
-        const waveTiles = this.wave.getChildren();
-        const maxX = waveTiles.length > 0 ? Math.max.apply(Math,waveTiles.map((o) => o.x)) : 0;
-        const maxXTile = waveTiles.length > 0 ? waveTiles.find((o) => o.x == maxX) : null;
-        const minX = waveTiles.length > 0 ? Math.min.apply(Math,waveTiles.map((o) => o.x)) : 0;
 
         // create chunks around position if they don't exist
         let chunkPositions = '';
@@ -94,26 +70,10 @@ class Game extends Phaser.Scene {
                     chunkPositions = chunkPositions.concat('('+x+', '+y+') ');
                     const newChunk = new Chunk(this, x, y);
                     this.chunks.push(newChunk);
-
-                    if(newChunk.x * this.chunkSize * this.tileSize < minX) {
-                        for(let i = minX; i > newChunk.x * this.chunkSize * this.tileSize; i -= this.tileSize) {
-                            let waveTile = new WaveTile(this, i, maxXTile ? Math.round(maxXTile.y) : this.waveStartY);
-                             waveTile.body.setVelocityY(this.waveVelocityY);
-                            this.wave.add(waveTile);
-                            console.log({x: waveTile.body.x, y: waveTile.body.y, at: waveTile.metaData.created.at})
-                        }
-                    }
-                    if(newChunk.x * this.chunkSize * this.tileSize > maxX) {
-                        for(let i = maxX; i < newChunk.x * this.chunkSize * this.tileSize; i += this.tileSize) {
-                            let waveTile = new WaveTile(this, i, maxXTile ? Math.round(maxXTile.y) : this.waveStartY);
-                             waveTile.body.setVelocityY(this.waveVelocityY);
-                            this.wave.add(waveTile);
-                            console.log({x: waveTile.body.x, y: waveTile.body.y, at: waveTile.metaData.created.at})
-                        }
-                    }
                 }
             }
         }
+
         chunkPositions != '' ? console.log(`Created chunks around (${snappedChunkX}, ${snappedChunkY}) in ${chunkPositions}`) : null;
 
         // load existings chunks close to position & unload existing chunks far from position
@@ -123,13 +83,11 @@ class Game extends Phaser.Scene {
             if(Phaser.Math.Distance.Between(snappedChunkX, snappedChunkY, chunk.x, chunk.y) < 4) {
                 if(chunk !== null) {
                     chunk.load();
-                    //console.log(`Loading chunk in (${chunk.x}, ${chunk.y})`)
                 }
             }
             else {
                 if(chunk !== null) {
                     chunk.unload();
-                    //console.log(`Unloading chunk in (${chunk.x}, ${chunk.y})`)
                 }
             }
         }
@@ -139,15 +97,11 @@ class Game extends Phaser.Scene {
         const nextLv = this.levels.find(lv => lv.threshold > totalPlayerDist);
 
         if(totalPlayerDist > this.level.threshold) {
+            console.log('Level up: adding more wave speed.')
             this.level = nextLv;
             /**
              * TODO : handle case where no lv is found
              */
-            const waveTiles = this.wave.getChildren();
-            waveTiles.forEach((tile) => {
-                tile.body.velocity.y = this.level.waveVelocityY;
-                tile.metaData.updated = {at: new Date().toTimeString(), by: 'Level Controller', coords: {x: tile.body.x, y: tile.body.y}};
-            });
         }
 
         // touch controls
@@ -172,11 +126,6 @@ class Game extends Phaser.Scene {
 
         // camera
         this.cameras.main.centerOn(boat.x, boat.y - 40);
-        const playerToWaveDist = Math.round(Math.abs(this.player.body.y) - Math.abs(this.wave.getChildren()[0].body.y));
-        if(playerToWaveDist < 800) {
-            const intensity = Math.round((1 - ((playerToWaveDist - 200) > 0 ? (playerToWaveDist - 200) :  0) / (800 - 200)) * 100) / 100;
-            this.cameras.main.shake(50, intensity * 0.001);
-        }
 
         // UI
         this.UI.playerLoot.innerHTML = this.player.loot;
@@ -217,10 +166,10 @@ class Game extends Phaser.Scene {
             }
         }
 
+
         // debug
         this.debug.innerHTML =
             `boat speed : ${Math.round(this.player.boat.body.speed)}
-            <br /> wave velocity Y : ${this.level.waveVelocityY}
             <br /> max speed : ${this.player.boat.body.maxSpeed}
             <br /> player position : (${Math.round(this.player.body.x)}, ${Math.round(this.player.body.y)})
             <br /> closest loot : (${closestLoot.x}, ${closestLoot.y}) (${closestLoot.d})
@@ -251,12 +200,6 @@ class Game extends Phaser.Scene {
 
         // loots
         this.loots = this.add.group();
-
-        // tsunami
-        this.wave = this.add.group();
-
-        // collisions
-        this.physics.add.overlap(this.player.boat, this.wave, this.handleWaveTouched, null, this);
 
         // controls
         this.keyZ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
