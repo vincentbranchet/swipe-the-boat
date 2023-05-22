@@ -1,5 +1,6 @@
 import Tile from "./Tile.js";
 import ObjectController from './ObjectController.js';
+import WaveTile from "./WaveTile.js";
 
 class Chunk {
     constructor(scene, x, y) {
@@ -8,6 +9,17 @@ class Chunk {
         this.y = y;
         this.tiles = this.scene.add.group();
         this.isLoaded = false;
+    }
+
+    createWaveTiles(y = 0, velocity = 0, size = 0) {
+        let tiles = [];
+        for(let i = this.minX; i < this.maxX; i += size) {
+            let waveTile = new WaveTile(this.scene, i, y);
+            waveTile.body.setVelocityY(velocity);
+            tiles.push(waveTile);
+            console.log({x: waveTile.body.x, y: waveTile.body.y, at: waveTile.metaData.created.at})
+        }
+        return tiles;
     }
 
     unload() {
