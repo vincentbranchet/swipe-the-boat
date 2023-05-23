@@ -3,86 +3,13 @@ import Rock from './Rock.js';
 
 export default class ObjectController {
         static rocksData = [
-            {id: 1, size: 16, key: 112, breaksAt: 2, spawnRates: [
-                {lv: 0, spawnRate: 0.005},
-                {lv: 1, spawnRate: 0.010},
-                {lv: 2, spawnRate: 0.015},
-                {lv: 3, spawnRate: 0.020},
-                {lv: 4, spawnRate: 0.025},
-                {lv: 5, spawnRate: 0.020},
-                {lv: 6, spawnRate: 0.015},
-                {lv: 7, spawnRate: 0.010},
-                {lv: 8, spawnRate: 0.005},
-                {lv: 9, spawnRate: 0},
-                {lv: 10, spawnRate: 0},
-            ]},
-            {id: 2, size: 24, key: 109, breaksAt: 3, spawnRates: [
-                {lv: 0, spawnRate: 0},
-                {lv: 1, spawnRate: 0},
-                {lv: 2, spawnRate: 0.005},
-                {lv: 3, spawnRate: 0.010},
-                {lv: 4, spawnRate: 0.015},
-                {lv: 5, spawnRate: 0.020},
-                {lv: 6, spawnRate: 0.025},
-                {lv: 7, spawnRate: 0.020},
-                {lv: 8, spawnRate: 0.015},
-                {lv: 9, spawnRate: 0.010},
-                {lv: 10, spawnRate: 0.005},
-            ]},
-            {id: 3, size: 32, key: 113, breaksAt: 4, spawnRates: [
-                {lv: 0, spawnRate: 0},
-                {lv: 1, spawnRate: 0},
-                {lv: 2, spawnRate: 0},
-                {lv: 3, spawnRate: 0.01},
-                {lv: 4, spawnRate: 0.02},
-                {lv: 5, spawnRate: 0.03},
-                {lv: 6, spawnRate: 0.04},
-                {lv: 7, spawnRate: 0.05},
-                {lv: 8, spawnRate: 0.04},
-                {lv: 9, spawnRate: 0.03},
-                {lv: 10, spawnRate: 0.02},
-            ]},
-            {id: 4, size: 40, key: 108, breaksAt: 5, spawnRates: [
-                {lv: 0, spawnRate: 0},
-                {lv: 1, spawnRate: 0},
-                {lv: 2, spawnRate: 0},
-                {lv: 3, spawnRate: 0},
-                {lv: 4, spawnRate: 0.01},
-                {lv: 5, spawnRate: 0.02},
-                {lv: 6, spawnRate: 0.03},
-                {lv: 7, spawnRate: 0.04},
-                {lv: 8, spawnRate: 0.05},
-                {lv: 9, spawnRate: 0.04},
-                {lv: 10, spawnRate: 0.03},
-            ]},
-            {id: 5, size: 48, key: 111, breaksAt: 6, spawnRates: [
-                {lv: 0, spawnRate: 0},
-                {lv: 1, spawnRate: 0},
-                {lv: 2, spawnRate: 0},
-                {lv: 3, spawnRate: 0},
-                {lv: 4, spawnRate: 0},
-                {lv: 5, spawnRate: 0.01},
-                {lv: 6, spawnRate: 0.02},
-                {lv: 7, spawnRate: 0.03},
-                {lv: 8, spawnRate: 0.04},
-                {lv: 9, spawnRate: 0.05},
-                {lv: 10, spawnRate: 0.04},
-            ]},
-            {id: 6, size: 64, key: 110, breaksAt: 7, spawnRates: [
-                {lv: 0, spawnRate: 0},
-                {lv: 1, spawnRate: 0},
-                {lv: 2, spawnRate: 0},
-                {lv: 3, spawnRate: 0},
-                {lv: 4, spawnRate: 0},
-                {lv: 5, spawnRate: 0},
-                {lv: 6, spawnRate: 0.01},
-                {lv: 7, spawnRate: 0.02},
-                {lv: 8, spawnRate: 0.03},
-                {lv: 9, spawnRate: 0.04},
-                {lv: 10, spawnRate: 0.05},
-            ]},
+            {id: 1, size: 16, key: 112, maxPerChunk: 35, breaksAt: 2, spawnMin: 0.0050, spawnFactor: 1.5},
+            {id: 1, size: 24, key: 109, maxPerChunk: 25, breaksAt: 3, spawnMin: 0.0010, spawnFactor: 2},
+            {id: 1, size: 32, key: 113, maxPerChunk: 15, breaksAt: 4, spawnMin: 0.0005, spawnFactor: 2.5},
+            {id: 1, size: 40, key: 108, maxPerChunk: 10, breaksAt: 5, spawnMin: 0.0001, spawnFactor: 3},
+            {id: 1, size: 48, key: 111, maxPerChunk: 5, breaksAt: 6, spawnMin: 0.00005, spawnFactor: 4},
+            {id: 1, size: 16, key: 110, maxPerChunk: 3, breaksAt: 7, spawnMin: 0.00001, spawnFactor: 5},
         ];
-
         static lootData = {
             id: 1,
             key: 153,
@@ -109,43 +36,33 @@ export default class ObjectController {
      */
     static spawnRocks(chunk) {
         if(chunk) {
-            const lv = chunk.scene.level.id;
             this.rocksData.forEach(rock => {
-                const rockDataForLevel = rock.spawnRates.find(r => r.lv === lv);
-                if(rockDataForLevel && rockDataForLevel.spawnRate) {
-                    let toSpawn = 0;
+                for(let i = 0; i < rock.maxPerChunk; i++) {
+                    const distanceFromStart = Phaser.Math.Distance.Between(chunk.x, chunk.y, 0, 0); // TODO : set as Chunk prop
+                    const diceThrow = Math.random();
 
-                    for(let i = 0; i < (chunk.scene.chunkSize * chunk.scene.chunkSize); i++) {
-                        const diceThrow = Math.random();
+                    if(diceThrow < (rock.spawnMin)) { // TODO : add spawn factor (higher rate with higher distance)
+                        console.log(`Spawning a rock of id ${rock.id} at ${distanceFromStart} from start`);
 
-                        if(diceThrow < rockDataForLevel.spawnRate) {
-                            toSpawn++;
-                        }
-                    }
-
-                    if(toSpawn > 0) {
-                        console.log(`Spawning ${toSpawn} rocks of id ${rock.id}`);
-                    }
-
-                    for(let i = 0; i < toSpawn; i++) {
                         const x = Math.floor(Math.random() * ((chunk.maxX - rock.size) - (chunk.minX + rock.size)) + (chunk.minX + rock.size));
                         const y = Math.floor(Math.random() * ((chunk.maxY - rock.size) - (chunk.minY + rock.size)) + (chunk.minY + rock.size));
-
+    
                         const newRock = new Rock(chunk.scene, x, y, rock);
                         chunk.scene.add.existing(newRock);
                         chunk.scene.physics.add.existing(newRock);
                         chunk.scene.rocks.add(newRock);
                         newRock.body.depth = 20;
                         newRock.body.size = rock.size
-
+    
                         chunk.scene.physics.add.overlap(chunk.scene.player.boat, newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
                         const shield = chunk.scene.player.shield;
                         for(let i = 0; i < shield.length; i++) {
                             chunk.scene.physics.add.overlap(shield[i], newRock, chunk.scene.player.handleTouchedRock, null, chunk.scene.player);
                         }
                     }
+
                 }
-            });
+            })
         }
     }
 
