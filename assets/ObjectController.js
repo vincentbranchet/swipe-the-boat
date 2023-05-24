@@ -10,23 +10,9 @@ export default class ObjectController {
             {id: 1, size: 48, key: 111, maxPerChunk: 5, breaksAt: 6, spawnMin: 0.00005, spawnFactor: 0.0000050},
             {id: 1, size: 16, key: 110, maxPerChunk: 3, breaksAt: 7, spawnMin: 0.00001, spawnFactor: 0.0000100},
         ];
-        static lootData = {
-            id: 1,
-            key: 153,
-            reward: 5, 
-            spawnRates: [
-                {lv: 0, spawnRate: 0.0005},
-                {lv: 1, spawnRate: 0.0005},
-                {lv: 2, spawnRate: 0.0005},
-                {lv: 3, spawnRate: 0.0005},
-                {lv: 4, spawnRate: 0.0005},
-                {lv: 5, spawnRate: 0.0005},
-                {lv: 6, spawnRate: 0.0005},
-                {lv: 7, spawnRate: 0.0005},
-                {lv: 8, spawnRate: 0.0005},
-                {lv: 9, spawnRate: 0.0005},
-                {lv: 10, spawnRate: 0.0005},
-            ]};
+        static lootData = [
+            {id: 1, key: 153, maxPerChunk: 35, reward: 5, spawnRate: 0.0005}
+        ];
     
 
     /**
@@ -42,7 +28,6 @@ export default class ObjectController {
                     const spawnRate = rock.spawnMin + rock.spawnFactor * distanceFromStart;
                     const diceThrow = Math.random();
 
-                    console.log(`spawnRate : ${spawnRate}`)
                     if(diceThrow < spawnRate) {
                         console.log(`Spawning a rock of id ${rock.id} at ${distanceFromStart} from start`);
 
@@ -75,38 +60,26 @@ export default class ObjectController {
      */
     static spawnLoot(chunk) {
         if(chunk) {
-            const lv = chunk.scene.level.id;
-
-            const lootDataForLevel = this.lootData.spawnRates.find(d => d.lv === lv);
-            if(lootDataForLevel && lootDataForLevel.spawnRate) {
-                let toSpawn = 0;
-
-                for(let i = 0; i < (chunk.scene.chunkSize * chunk.scene.chunkSize); i++) {
+            this.lootData.forEach(loot => {
+                for(let i = 0; i < loot.maxPerChunk; i++) {
                     const diceThrow = Math.random();
 
-                    if(diceThrow < lootDataForLevel.spawnRate) {
-                        toSpawn++;
+                    if(diceThrow < loot.spawnRate) {
+                        console.log(`Spawning a loot.`);
+
+                        const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
+                        const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
+        
+                        const newLoot = new Loot(chunk.scene, x, y, loot.key, loot.reward);
+                        chunk.scene.add.existing(newLoot);
+                        chunk.scene.physics.add.existing(newLoot);
+                        chunk.scene.loots.add(newLoot);
+                        newLoot.body.depth = 20;
+        
+                        chunk.scene.physics.add.overlap(chunk.scene.player.boat, newLoot, chunk.scene.player.handleTouchedLoot, null, chunk.scene.player);
                     }
                 }
-
-                if(toSpawn > 0) {
-                    console.log(`Spawning ${toSpawn} loots of id ${this.lootData.id}`);
-                }
-
-                for(let i = 0; i < toSpawn; i++) {
-                    const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
-                    const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
-
-                    const newLoot = new Loot(chunk.scene, x, y, this.lootData.key, this.lootData.reward);
-                    chunk.scene.add.existing(newLoot);
-                    chunk.scene.physics.add.existing(newLoot);
-                    chunk.scene.loots.add(newLoot);
-                    newLoot.body.depth = 20;
-
-                    chunk.scene.physics.add.overlap(chunk.scene.player.boat, newLoot, chunk.scene.player.handleTouchedLoot, null, chunk.scene.player);
-                }
-            }
-
+            })
         }
     }
 }
