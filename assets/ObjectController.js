@@ -3,12 +3,12 @@ import Rock from './Rock.js';
 
 export default class ObjectController {
         static rocksData = [
-            {id: 1, size: 16, key: 112, maxPerChunk: 35, breaksAt: 2, spawnMin: 0.0050, spawnFactor: 1.5},
-            {id: 1, size: 24, key: 109, maxPerChunk: 25, breaksAt: 3, spawnMin: 0.0010, spawnFactor: 2},
-            {id: 1, size: 32, key: 113, maxPerChunk: 15, breaksAt: 4, spawnMin: 0.0005, spawnFactor: 2.5},
-            {id: 1, size: 40, key: 108, maxPerChunk: 10, breaksAt: 5, spawnMin: 0.0001, spawnFactor: 3},
-            {id: 1, size: 48, key: 111, maxPerChunk: 5, breaksAt: 6, spawnMin: 0.00005, spawnFactor: 4},
-            {id: 1, size: 16, key: 110, maxPerChunk: 3, breaksAt: 7, spawnMin: 0.00001, spawnFactor: 5},
+            {id: 1, size: 16, key: 112, maxPerChunk: 35, breaksAt: 2, spawnMin: 0.0050, spawnFactor: 0.0000001},
+            {id: 1, size: 24, key: 109, maxPerChunk: 25, breaksAt: 3, spawnMin: 0.0010, spawnFactor: 0.0000005},
+            {id: 1, size: 32, key: 113, maxPerChunk: 15, breaksAt: 4, spawnMin: 0.0005, spawnFactor: 0.0000010},
+            {id: 1, size: 40, key: 108, maxPerChunk: 10, breaksAt: 5, spawnMin: 0.0001, spawnFactor: 0.0000020},
+            {id: 1, size: 48, key: 111, maxPerChunk: 5, breaksAt: 6, spawnMin: 0.00005, spawnFactor: 0.0000050},
+            {id: 1, size: 16, key: 110, maxPerChunk: 3, breaksAt: 7, spawnMin: 0.00001, spawnFactor: 0.0000100},
         ];
         static lootData = {
             id: 1,
@@ -38,10 +38,12 @@ export default class ObjectController {
         if(chunk) {
             this.rocksData.forEach(rock => {
                 for(let i = 0; i < rock.maxPerChunk; i++) {
-                    const distanceFromStart = Phaser.Math.Distance.Between(chunk.x, chunk.y, 0, 0); // TODO : set as Chunk prop
+                    const distanceFromStart = Phaser.Math.Distance.Between(chunk.x, chunk.y, 0, 0);
+                    const spawnRate = rock.spawnMin + rock.spawnFactor * distanceFromStart;
                     const diceThrow = Math.random();
 
-                    if(diceThrow < (rock.spawnMin)) { // TODO : add spawn factor (higher rate with higher distance)
+                    console.log(`spawnRate : ${spawnRate}`)
+                    if(diceThrow < spawnRate) {
                         console.log(`Spawning a rock of id ${rock.id} at ${distanceFromStart} from start`);
 
                         const x = Math.floor(Math.random() * ((chunk.maxX - rock.size) - (chunk.minX + rock.size)) + (chunk.minX + rock.size));
