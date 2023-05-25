@@ -24,15 +24,15 @@ export default class ObjectController {
         if(chunk) {
             this.rocksData.forEach(rock => {
                 for(let i = 0; i < rock.maxPerChunk; i++) {
-                    const distanceFromStart = Phaser.Math.Distance.Between(chunk.x, chunk.y, 0, 0);
+                    const distanceFromStart = Math.round(Phaser.Math.Distance.Between(chunk.x, chunk.y, 0, 0));
                     const spawnRate = rock.spawnMin + rock.spawnFactor * distanceFromStart;
                     const diceThrow = Math.random();
 
                     if(diceThrow < spawnRate) {
-                        console.log(`Spawning a rock of id ${rock.id} at ${distanceFromStart} from start`);
-
                         const x = Math.floor(Math.random() * ((chunk.maxX - rock.size) - (chunk.minX + rock.size)) + (chunk.minX + rock.size));
                         const y = Math.floor(Math.random() * ((chunk.maxY - rock.size) - (chunk.minY + rock.size)) + (chunk.minY + rock.size));
+                        
+                        console.log(`Spawning a rock of id ${rock.id} in (${x + ',' + y}) | ${distanceFromStart} from start`);
     
                         const newRock = new Rock(chunk.scene, x, y, rock);
                         chunk.scene.add.existing(newRock);
@@ -65,10 +65,10 @@ export default class ObjectController {
                     const diceThrow = Math.random();
 
                     if(diceThrow < loot.spawnRate) {
-                        console.log(`Spawning a loot.`);
-
                         const x = Math.floor(Math.random() * (chunk.maxX - chunk.minX) + chunk.minX);
                         const y = Math.floor(Math.random() * (chunk.maxY - chunk.minY) + chunk.minY);
+                        
+                        console.log(`Spawning a loot in (${x + ',' + y}).`);
         
                         const newLoot = new Loot(chunk.scene, x, y, loot.key, loot.reward);
                         chunk.scene.add.existing(newLoot);
