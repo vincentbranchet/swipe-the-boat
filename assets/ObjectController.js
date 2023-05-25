@@ -16,7 +16,7 @@ export default class ObjectController {
     
 
     /**
-     * For each rock time, look for data for current level, runs a spawn check for each tile on chunk, and spawns rock on random chunk tiles
+     * For each rock, runs a spawn check for each possible spawn
      * Called once on each loaded chunk
      * @param {*} chunk
      */
@@ -54,7 +54,7 @@ export default class ObjectController {
     }
 
     /**
-     * Looks for loot data for current level, runs a spawn check for each tile on chunk, and spawns loot on random chunk tiles
+     * Runs a spawn check for each possible spawn
      * Called once on each loaded chunk
      * @param {*} chunk
      */
