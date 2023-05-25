@@ -96,6 +96,7 @@ class Game extends Phaser.Scene {
         this.player.body.x = boat.x - 16;
         this.player.body.y = boat.y - 32;
         this.player.updateShield();
+        this.player.updateAngle();
 
         // camera
         this.cameras.main.centerOn(boat.x, boat.y - 40);

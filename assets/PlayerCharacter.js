@@ -25,6 +25,9 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
         this.boat.body.drag.y = 50;
         this.boat.body.maxSpeed = 150;
 
+        this.boat.angle = 180
+        console.log(this)
+
         console.log(`Boat was created with body size (${this.boat.body.width}, ${this.boat.body.height}).`);
     }
 
@@ -58,6 +61,18 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
 
                 this.scene.physics.add.overlap(this.shield[i], this.scene.rocks, this.scene.player.handleTouchedRock, null, this.scene.player);
             }
+        }
+    }
+
+    updateAngle() {
+        if(Math.abs(this.boat.body.velocity.x) > Math.abs(this.boat.body.velocity.y)) {
+            if(this.boat.body.velocity.x < 0)
+                this.boat.angle = -90
+            else this.boat.angle = 90
+        } else if(Math.abs(this.boat.body.velocity.y) > Math.abs(this.boat.body.velocity.x)) {
+            if(this.boat.body.velocity.y < 0) 
+                this.boat.angle = 0
+            else this.boat.angle = 180
         }
     }
 
