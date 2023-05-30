@@ -19,11 +19,47 @@ export default class ShieldController {
         return size;
     }
 
-    static getYOffset() {
+    static offDirectionOffset() {
         return 34;
     }
 
-    static getXOffset(size = 0) {
+    static directionOffset(size = 0) {
         return size * this.width + this.width;
+    }
+
+    static getCoords(size, directionAngle) {
+        const coords = []
+
+        if(directionAngle === 180) {
+            for(let i = 0; i < size; i++) {
+                coords.push({
+                    x: 0 - ShieldController.directionOffset(i) + (size / 2 * ShieldController.width),
+                    y: 0 + ShieldController.offDirectionOffset()
+                })
+            }
+        } else if(directionAngle === 90) {
+            for(let i = 0; i < size; i++) {
+                coords.push({
+                    x: 0 + ShieldController.offDirectionOffset(),
+                    y: 0 - ShieldController.directionOffset(i) + (size / 2 * ShieldController.width)
+                })
+            }
+        } else if(directionAngle === -90) {
+            for(let i = 0; i < size; i++) {
+                coords.push({
+                    x: 0 - ShieldController.offDirectionOffset(),
+                    y: 0 - ShieldController.directionOffset(i) + (size / 2 * ShieldController.width)
+                })
+            }
+        } else {
+            for(let i = 0; i < size; i++) {
+                coords.push({
+                    x: 0 - ShieldController.directionOffset(i) + (size / 2 * ShieldController.width),
+                    y: 0 - ShieldController.offDirectionOffset()
+                })
+            }
+        }
+
+        return coords;
     }
 }

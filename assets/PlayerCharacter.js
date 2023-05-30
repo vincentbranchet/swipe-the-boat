@@ -55,25 +55,33 @@ export default class PlayerCharacter extends Phaser.GameObjects.Sprite {
         }
 
         if(this.shield.length > 0) {
+            const coords = ShieldController.getCoords(this.shield.length, this.directionAngle())
+
             for(let i = 0; i < this.shield.length; i++) {
-                this.shield[i].body.x = this.boat.x - ShieldController.getXOffset(i) + (this.shield.length / 2 * ShieldController.width);
-                this.shield[i].body.y = this.boat.y - ShieldController.getYOffset();
+                this.shield[i].body.x = this.boat.x + coords[i].x;
+                this.shield[i].body.y = this.boat.y + coords[i].y;
+                
+                this.shield[i].angle = this.directionAngle()
 
                 this.scene.physics.add.overlap(this.shield[i], this.scene.rocks, this.scene.player.handleTouchedRock, null, this.scene.player);
             }
         }
     }
 
-    updateAngle() {
+    directionAngle() {
         if(Math.abs(this.boat.body.velocity.x) > Math.abs(this.boat.body.velocity.y)) {
             if(this.boat.body.velocity.x < 0)
-                this.boat.angle = -90
-            else this.boat.angle = 90
+            return -90
+            else return 90
         } else if(Math.abs(this.boat.body.velocity.y) > Math.abs(this.boat.body.velocity.x)) {
             if(this.boat.body.velocity.y < 0) 
-                this.boat.angle = 0
-            else this.boat.angle = 180
-        }
+            return 0
+            else return 180
+        } else return 0
+    }
+
+    updateAngle() {
+        return this.boat.angle = this.directionAngle()
     }
 
     /**
